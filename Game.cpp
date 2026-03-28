@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Render.h"
 #include <ncurses.h>
 
 void Game::run(){
@@ -157,53 +158,23 @@ void Game::render(){
 }
 
 void Game::renderMenu(){
-    clear();
-    int cy = 3;
-    int cx = 4;
-    mvprintw(cy, cx, "  THE LEGEND OF HKU");
-    mvprintw(cy+2, cx, "%s Start",  menuSelection == 0 ? ">" : " ");
-    mvprintw(cy+3, cx, "%s Quit",   menuSelection == 1 ? ">" : " ");
-    mvprintw(cy+5, cx, "W/S or arrows to move, Enter to select");
-    refresh();
+    renderer.drawMenu(menuSelection);
 }
 
 void Game::renderPlaying(){
-    clear();
-
-    for(int y = 0; y < map.getHeight(); y++){
-        for(int x = 0; x < map.getWidth(); x++){
-            mvaddch(y, x, map.getTile(x, y));
-        }
-    }
-
-    if(isAttacking) mvaddch(attackY, attackX, '*');
-    mvaddch(player.y, player.x, 'P');
-
-    mvprintw(map.getHeight() + 1, 0, "[P] Pause  [Q] Quit  [SPACE] Attack");
-    refresh();
+    renderer.drawGame(map, player, isAttacking, attackX, attackY);
 }
 
 void Game::renderPaused(){
-    // draws the world behind
-    // renderPlaying();
-    clear();
-    mvprintw(2, 4, "*** PAUSED ***");
-    mvprintw(3, 4, "[P] Resume   [Q] Quit");
-    refresh();
+    renderer.drawPauseOverlay();
 }
 
 void Game::renderGameOver(){
-    clear();
-    mvprintw(3, 4, "  GAME OVER");
-    mvprintw(5, 4, "Press ENTER to return to menu");
-    refresh();
+    renderer.drawGameOver();
 }
 
 void Game::renderWin(){
-    clear();
-    mvprintw(3, 4, "  YOU WIN!");
-    mvprintw(5, 4, "Press ENTER to return to menu");
-    refresh();
+    renderer.drawWin();
 }
 
 Game::Game(){}

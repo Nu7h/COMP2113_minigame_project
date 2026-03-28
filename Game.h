@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "GameState.h"
+#include "Render.h"
 
 class Game {
 public:
@@ -49,6 +50,9 @@ private:
     int attackCD = 0;
     int attackX = 0;
     int attackY = 0;
+
+    // --- render ---
+    Render renderer;
 
     // --- menu ---
     int menuSelection = 0;

@@ -5,7 +5,7 @@ LDFLAGS = -lncurses
 BUILD_DIR = build
 TARGET = $(BUILD_DIR)/game
 
-SRCS = main.cpp Game.cpp Map.cpp Player.cpp
+SRCS = main.cpp Game.cpp Map.cpp Player.cpp Render.cpp
 OBJS = $(addprefix $(BUILD_DIR)/, $(SRCS:.cpp=.o))
 
 all: $(TARGET)
