@@ -1,6 +1,5 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra
-LDFLAGS = -lncurses
 
 BUILD_DIR = build
 TARGET = $(BUILD_DIR)/game
@@ -11,7 +10,7 @@ OBJS = $(addprefix $(BUILD_DIR)/, $(SRCS:.cpp=.o))
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET) $(LDFLAGS)
+	$(CXX) $(OBJS) -o $(TARGET)
 
 $(BUILD_DIR)/%.o: %.cpp
 	@mkdir -p $(BUILD_DIR)

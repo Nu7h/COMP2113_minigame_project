@@ -1,29 +1,51 @@
 #include "Game.h"
-#include "Render.h"
-#include <ncurses.h>
+#include <chrono>
+#include <thread>
+#include <unistd.h> 
+#include <cstdlib>
+
+
+static const int KEY_UP    = 1000;
+static const int KEY_DOWN  = 1001;
+static const int KEY_RIGHT = 1002;
+static const int KEY_LEFT  = 1003;
 
 void Game::run(){
+    using clock = std::chrono::steady_clock;
+    using ms    = std::chrono::milliseconds;
+    auto next = clock::now();
+
     while(true){
         input();
         update();
         render();
-        napms(50);
+
+        next += ms(50);
+        std::this_thread::sleep_until(next);
     }
 }
 
-/*
-switch(state){
-    case GameState::MENU:
-    case GameState::PLAYING:
-    case GameState::PAUSED:
-    case GameState::GAME_OVER:
-    case GameState::WIN:
-}
-*/
+static int readKey() {
+    unsigned char c = 0;
+    if (read(STDIN_FILENO, &c, 1) != 1) return -1;  // -1 = no key
 
-// ===============
-//      INPUT
-// ===============
+    // Handle arrow key escape sequences: ESC [ A/B/C/D
+    if (c == '\033') {
+        unsigned char seq[2];
+        if (read(STDIN_FILENO, &seq[0], 1) != 1) return '\033';
+        if (read(STDIN_FILENO, &seq[1], 1) != 1) return '\033';
+        if (seq[0] == '[') {
+            switch (seq[1]) {
+                case 'A': return KEY_UP;
+                case 'B': return KEY_DOWN;
+                case 'C': return KEY_RIGHT;
+                case 'D': return KEY_LEFT;
+            }
+        }
+        return '\033';
+    }
+    return (int)c;
+}
 
 void Game::input(){
     switch(state){
@@ -36,7 +58,7 @@ void Game::input(){
 }
 
 void Game::inputMenu(){
-    int ch = getch();
+    int ch = readKey();
     switch(ch){
         case 'w':
         case KEY_UP:
@@ -55,7 +77,7 @@ void Game::inputMenu(){
 }
 
 void Game::inputPlaying(){
-    int ch = getch();
+    int ch = readKey();
     switch(ch){
         case 'q': exit(0);
         case 'p': state = GameState::PAUSED; break;
@@ -84,7 +106,7 @@ void Game::inputPlaying(){
 }
 
 void Game::inputPaused(){
-    int ch = getch();
+    int ch = readKey();
     switch(ch){
         case 'p': state = GameState::PLAYING; break;
         case 'q': exit(0);
@@ -92,7 +114,7 @@ void Game::inputPaused(){
 }
 
 void Game::inputGameOver(){
-    int ch = getch();
+    int ch = readKey();
     if(ch == ' ' || ch == '\n'){
         player = Player();
         isAttacking   = false;
@@ -104,7 +126,7 @@ void Game::inputGameOver(){
 }
 
 void Game::inputWin(){
-    int ch = getch();
+    int ch = readKey();
     if(ch == '\n' || ch == ' '){
         menuSelection = 0;
         state = GameState::MENU;
