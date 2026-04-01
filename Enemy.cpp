@@ -1,17 +1,21 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
+#include "Map.h"
 
 using namespace std;
 
 class baseEnemy
 {
     public:
+    void idle(){
+
+    }
     void moving(){
 
     }
     void takingDMG(){
-
+        
     }
     int attacking(){
 
