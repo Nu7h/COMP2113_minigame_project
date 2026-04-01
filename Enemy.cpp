@@ -1,41 +1,15 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
-#include "Map.h"
+#include "Enemy.h"
 
 using namespace std;
 
-class baseEnemy
-{
-    public:
-    void idle(){
+int min_approaching_tiles = 5;
 
-    }
-    void moving(){
+void Enemy::approach(const Player& player, const Map& map){
+    int px = player.getLastX();
+    int py = player.getLastY();
 
-    }
-    void takingDMG(){
-        
-    }
-    int attacking(){
 
-    }
-    
-};
-
-class  Slime : public baseEnemy
-{
-    private:
-    int hp = 100;
-    int min_atk = 0;
-    int max_atk = 10;
-};
-
-class Boss : public baseEnemy
-{
-    private:
-    int hp = 1000;
-    int min_atk = 10;
-    int max_atk = 40;
-    int healing = 10;
-};
+}

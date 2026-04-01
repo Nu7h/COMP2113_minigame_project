@@ -3,11 +3,12 @@
 
 #include "Map.h"
 #include "Player.h"
+#include "Enemy.h"
 
 class Render {
 public:
     void drawMenu(int menuSelection);
-    void drawGame(const Map& map, const Player& player, bool isAttacking, int attackX, int attackY);
+    void drawGame(const Map& map, const Player& player, const Enemy& enemy, bool isAttacking, int attackX, int attackY);
     void drawPauseOverlay();
     void drawGameOver();
     void drawWin();
@@ -15,9 +16,11 @@ public:
 private:
     void drawMap(const Map& map);
     void drawPlayer(const Player& player);
+    void drawEnemy(const Enemy& enemy);
     void drawAttack(bool isAttacking, int attackX, int attackY);
     void drawHUD(const Map& map);
     void drawTile(int x, int y, char tile);
+
 };
 
 #endif

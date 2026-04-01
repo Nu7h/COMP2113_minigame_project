@@ -11,11 +11,12 @@ void Render::drawMenu(int menuSelection){
     refresh();
 }
 
-void Render::drawGame(const Map& map, const Player& player, bool isAttacking, int attackX, int attackY){
+void Render::drawGame(const Map& map, const Player& player, const Enemy& enemy, bool isAttacking, int attackX, int attackY){
     clear();
     drawMap(map);
     drawAttack(isAttacking, attackX, attackY);
     drawPlayer(player);
+    drawEnemy(enemy);
     drawHUD(map);
     refresh();
 }
@@ -59,6 +60,10 @@ void Render::drawPlayer(const Player& player){
 
 void Render::drawAttack(bool isAttacking, int attackX, int attackY){
     if(isAttacking) mvaddch(attackY, attackX, '*');
+}
+
+void Render::drawEnemy(const Enemy& slime){
+    mvaddch((int)slime.y, (int)slime.x, 'E');
 }
 
 void Render::drawHUD(const Map& map){
