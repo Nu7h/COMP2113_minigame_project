@@ -8,3 +8,12 @@ The main game will be based on text and dot arts.
 
 Run: 
 `make && ./build/game` or `make`
+
+### Basic game setups
+
+` ` is a walkable tile
+`#` is an obstacle (unwalkable)
+`P` is player
+`E` is enermy
+`B` is boss
+`*` is attacking partical
