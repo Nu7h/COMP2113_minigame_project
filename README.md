@@ -11,9 +11,9 @@ Run:
 
 ### Basic game setups
 
-` ` is a walkable tile
-`#` is an obstacle (unwalkable)
-`P` is player
-`E` is enermy
-`B` is boss
-`*` is attacking partical
+` ` is a walkable tile  
+`#` is an obstacle (unwalkable)  
+`P` is player  
+`E` is enermy  
+`B` is boss  
+`*` is attacking partical  
