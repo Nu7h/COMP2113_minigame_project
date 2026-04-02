@@ -183,7 +183,7 @@ void Game::renderMenu(){
 }
 
 void Game::renderPlaying(){
-    renderer.drawGame(map, player, isAttacking, attackX, attackY);
+    renderer.drawGame(map, player, slime, isAttacking, attackX, attackY);
 }
 
 void Game::renderPaused(){

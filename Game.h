@@ -5,6 +5,7 @@
 #include "Map.h"
 #include "GameState.h"
 #include "Render.h"
+#include "Enemy.h"
 
 class Game {
 public:
@@ -42,6 +43,7 @@ private:
     GameState state = GameState::MENU;
 
     // --- gameplay ---
+    Slime slime;
     Player player;  
     Map map;
 

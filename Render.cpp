@@ -18,11 +18,12 @@ void Render::drawMenu(int menuSelection){
     fflush(stdout);
 }
 
-void Render::drawGame(const Map& map, const Player& player, bool isAttacking, int attackX, int attackY){
+void Render::drawGame(const Map& map, const Player& player, const Enemy& enemy, bool isAttacking, int attackX, int attackY){
     clearScreen();
     drawMap(map);
     drawAttack(isAttacking, attackX, attackY);
     drawPlayer(player);
+    drawEnemy(enemy);
     drawHUD(map);
     fflush(stdout);
 }
@@ -70,6 +71,11 @@ void Render::drawAttack(bool isAttacking, int attackX, int attackY){
         moveTo(attackX, attackY);
         putchar('*');
     }
+}
+
+void Render::drawEnemy(const Enemy& slime){
+    moveTo((int)slime.y, (int)slime.x);
+    putchar('E');
 }
 
 void Render::drawHUD(const Map& map){
