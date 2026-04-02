@@ -29,7 +29,6 @@ static int readKey() {
     unsigned char c = 0;
     if (read(STDIN_FILENO, &c, 1) != 1) return -1;  // -1 = no key
 
-    // Handle arrow key escape sequences: ESC [ A/B/C/D
     if (c == '\033') {
         unsigned char seq[2];
         if (read(STDIN_FILENO, &seq[0], 1) != 1) return '\033';

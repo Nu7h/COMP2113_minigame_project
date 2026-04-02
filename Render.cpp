@@ -1,7 +1,7 @@
 #include "Render.h"
 
 static void moveTo(int x, int y) {
-    // ANSI: row is 1-based, col is 1-based
+    
     printf("\033[%d;%dH", y + 1, x + 1);
 }
 

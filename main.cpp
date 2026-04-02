@@ -7,8 +7,8 @@ static struct termios originalTermios;
 void enableRawMode() {
     tcgetattr(STDIN_FILENO, &originalTermios);
     struct termios raw = originalTermios;
-    raw.c_lflag &= ~(ECHO | ICANON);   // no echo, read char-by-char
-    raw.c_cc[VMIN]  = 0;               // non-blocking
+    raw.c_lflag &= ~(ECHO | ICANON);   
+    raw.c_cc[VMIN]  = 0;               g
     raw.c_cc[VTIME] = 0;
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
@@ -19,15 +19,15 @@ void disableRawMode() {
 
 int main() {
     enableRawMode();
-    atexit(disableRawMode);  // restore terminal on exit
+    atexit(disableRawMode); 
 
-    printf("\033[?25l");     // hide cursor
-    printf("\033[2J");       // clear screen once
+    printf("\033[?25l");     
+    printf("\033[2J");       
 
     Game game;
     game.run();
 
-    printf("\033[?25h");     // restore cursor
-    printf("\033[2J\033[H"); // clear on exit
+    printf("\033[?25h");     
+    printf("\033[2J\033[H"); 
     return 0;
 }
