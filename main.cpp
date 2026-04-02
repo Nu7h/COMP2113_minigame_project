@@ -8,7 +8,7 @@ void enableRawMode() {
     tcgetattr(STDIN_FILENO, &originalTermios);
     struct termios raw = originalTermios;
     raw.c_lflag &= ~(ECHO | ICANON);   
-    raw.c_cc[VMIN]  = 0;               g
+    raw.c_cc[VMIN]  = 0;
     raw.c_cc[VTIME] = 0;
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
