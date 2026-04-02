@@ -77,14 +77,19 @@ void Game::inputMenu(){
 
 void Game::inputPlaying(){
     int ch = readKey();
+
+    int dx = 0, dy = 0;
+    bool moved = false;
+
     switch(ch){
         case 'q': exit(0);
         case 'p': state = GameState::PAUSED; break;
 
-        case 'w': player.move(0, -1, map); break;
-        case 's': player.move(0, 1, map); break;
-        case 'a': player.move(-1, 0, map); break;
-        case 'd': player.move(1, 0, map); break;
+        case 'w': dx =  0; dy = -1; moved = true; break;
+        case 's': dx =  0; dy =  1; moved = true; break;
+        case 'a': dx = -1; dy =  0; moved = true; break;
+        case 'd': dx =  1; dy =  0; moved = true; break;
+        case 'e': transition = true; break;
 
         case ' ':
             if(!isAttacking && attackCD <= 0){
@@ -101,7 +106,51 @@ void Game::inputPlaying(){
             }
             break;
     }
+    
+    if(moved){
+        player.move(dx, dy, map);
+        handleRoomTransition();
+    }
 
+}
+
+void Game::handleRoomTransition(){
+    int x = player.getX();
+    int y = player.getY();
+    int w = map.getWidth();
+    int h = map.getHeight();
+
+    if(y == 0){
+        if(x <= (w/2) + 1 && x >= (w/2) - 2 && (transition || autotrans)) tryTransition('N');
+    } else if(x == w - 1){
+        if(y <= (h/2) && y >= (h/2) - 1 && (transition || autotrans)) tryTransition('E');
+    } else if(y == h - 1){
+        if(x <= (w/2) + 1 && x >= (w/2) - 2 && (transition || autotrans)) tryTransition('S');
+    } else if(x == 0){
+        if(y <= (h/2) && y >= (h/2) - 1 && (transition || autotrans)) tryTransition('W');
+    }
+
+    transition = false;
+}
+
+bool Game::tryTransition(char dir){
+    std::string next = map.getNeighbor(dir);
+    if(next == "0") return false;
+
+    std::string next_path = "room/" + next;
+    if(!map.loadFromFile(next_path)) return false;
+
+    currentRoom = next_path;
+
+    int w = map.getWidth();
+    int h = map.getHeight();
+
+    if(dir == 'N') player.y = h - 1;
+    else if(dir == 'E') player.x = 0;
+    else if(dir == 'S') player.y = 0;
+    else if(dir == 'W') player.x = w - 1;
+
+    return true;
 }
 
 void Game::inputPaused(){
@@ -198,5 +247,9 @@ void Game::renderWin(){
     renderer.drawWin();
 }
 
-Game::Game(){}
+Game::Game(){
+    if(!map.loadFromFile(currentRoom)){
+        exit(1);
+    }
+}
 

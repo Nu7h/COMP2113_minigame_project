@@ -6,6 +6,7 @@
 #include "GameState.h"
 #include "Render.h"
 #include "Enemy.h"
+#include <string>
 
 class Game {
 public:
@@ -58,6 +59,14 @@ private:
 
     // --- menu ---
     int menuSelection = 0;
+
+    // --- room ---
+    std::string currentRoom = "room/room0.txt";
+    bool autotrans = true; // set true if want autotransition w/o pressing E and false otherwise.
+    bool transition = false;
+
+    bool tryTransition(char dir);
+    void handleRoomTransition();
 
 };
 
