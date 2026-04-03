@@ -108,7 +108,7 @@ void Game::inputPlaying(){
     }
     
     if(moved){
-        player.move(dx, dy, map);
+        player.move(dx, dy, map, slime.x, slime.y);
         handleRoomTransition();
     }
 
@@ -149,6 +149,17 @@ bool Game::tryTransition(char dir){
     else if(dir == 'E') player.x = 0;
     else if(dir == 'S') player.y = 0;
     else if(dir == 'W') player.x = w - 1;
+
+    // Reset slime to a random walkable location not on the player
+    while(true){
+        int rx = 1 + rand() % (w > 2 ? w - 2 : 1);
+        int ry = 1 + rand() % (h > 2 ? h - 2 : 1);
+        if(map.isWalkable(rx, ry) && (rx != player.x || ry != player.y)){
+            slime.x = rx;
+            slime.y = ry;
+            break;
+        }
+    }
 
     return true;
 }
@@ -211,6 +222,8 @@ void Game::updatePlaying(){
     if(attackCD > 0){
         attackCD--;
     }
+    
+    slime.update(map, player.x, player.y);
 }
 
 // ===============
@@ -250,6 +263,18 @@ void Game::renderWin(){
 Game::Game(){
     if(!map.loadFromFile(currentRoom)){
         exit(1);
+    }
+    
+    // Spawn player on the first column that contains '.'
+    bool found = false;
+    for (int x = 0; x < map.getWidth() && !found; ++x) {
+        for (int y = 0; y < map.getHeight() && !found; ++y) {
+            if (map.isWalkable(x, y)) {
+                player.x = x;
+                player.y = y;
+                found = true;
+            }
+        }
     }
 }
 
