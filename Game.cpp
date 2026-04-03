@@ -211,6 +211,8 @@ void Game::updatePlaying(){
     if(attackCD > 0){
         attackCD--;
     }
+    
+    slime.update(map);
 }
 
 // ===============
