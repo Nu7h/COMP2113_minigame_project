@@ -7,7 +7,7 @@
 class Player : public Entity {
 public:
     Player() : Entity{1, 1} {}
-    void move(int dx, int dy, const Map& map, int ex = -1, int ey = -1);
+    void move(int dx, int dy, const Map& map);
 
     int getLastX() const { return lastX; }
     int getLastY() const { return lastY; }

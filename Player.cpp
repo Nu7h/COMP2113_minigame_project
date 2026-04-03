@@ -2,15 +2,12 @@
 #include "Map.h"
 using namespace std;
 
-void Player::move(int dx, int dy, const Map& map, int ex, int ey){
+void Player::move(int dx, int dy, const Map& map){
     lastX = dx;
     lastY = dy;
     
-    int nx = x + dx;
-    int ny = y + dy;
-    if(map.isWalkable(nx, ny)){
-        if(nx == ex && ny == ey) return;
-        x = nx;
-        y = ny;
+    if(map.isWalkable(x + dx, y + dy)){
+        x += dx;
+        y += dy;
     }
 }

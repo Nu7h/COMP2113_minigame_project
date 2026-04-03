@@ -10,16 +10,10 @@ class Player;
 class Enemy : public Entity {
     public:
         Enemy() : Entity{1, 6} {}
-        virtual ~Enemy() = default;
-        virtual void update(const Map& map, int px, int py);
         void approach(const Player& player, const Map& map);
         int getLastX() const { return lastX; }
         int getLastY() const { return lastY; }
 
-    protected:
-        int dx = 1;
-        int dy = 0;
-        int moveTimer = 0;
     private:
         int lastX = 0;
         int lastY = -1;
@@ -34,8 +28,6 @@ class Slime : public Enemy{
 };
 
 class Boss : public Enemy{
-    public:
-        void update(const Map& map, int px, int py) override {}
     private:
         int hp = 1000;
         int min_atk = 10;
