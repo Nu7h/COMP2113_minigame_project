@@ -17,6 +17,8 @@ class Enemy : public Entity {
     private:
         int lastX = 0;
         int lastY = -1;
+        int moveCooldown = 0;
+        static constexpr int maxmoveCooldown = 8;
 };
 
 class Slime : public Enemy{
