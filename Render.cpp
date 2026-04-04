@@ -74,7 +74,7 @@ void Render::drawAttack(bool isAttacking, int attackX, int attackY){
 }
 
 void Render::drawEnemy(const Enemy& slime){
-    moveTo((int)slime.y, (int)slime.x);
+    moveTo(slime.x, slime.y);
     putchar('E');
 }
 
