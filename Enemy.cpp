@@ -1,36 +1,31 @@
-#include <iostream>
-#include <ctime>
-#include <vector>
 #include <cstdlib>
 #include "Enemy.h"
 
 using namespace std;
 
-int min_approaching_tiles = 5;
+int max_approaching_tiles = 10;
 
 void Enemy::approach(const Player& player, const Map& map){
-    // Save current position
-    lastX = x;
-    lastY = y;
+    int px = player.getX(); 
+    int py = player.getY();
+    int distance = std::abs(px-x) + std::abs(py-y);
 
-    // Pick a random direction: 0=Up, 1=Down, 2=Left, 3=Right
-    int dir = std::rand() % 4;
-    int next_x = x;
-    int next_y = y;
-
-    if (dir == 0) {
-        next_y -= 1;
-    } else if (dir == 1) {
-        next_y += 1;
-    } else if (dir == 2) {
-        next_x -= 1;
-    } else if (dir == 3) {
-        next_x += 1;
-    }
-
-    // Check if the next tile is walkable (not a '#')
-    if (map.isWalkable(next_x, next_y)) {
-        x = next_x;
-        y = next_y;
+    if(distance <= max_approaching_tiles && distance != 0){
+        int adx = px - x; 
+        int ady = py - y; // which quatile the player is to the Enemy
+        int dx, dy = 0; 
+        if(std::abs(adx) > std::abs(ady)){
+            if(adx != 0)
+                dx = (adx > 0) ? 1 : -1;
+        } else {
+            if(ady != 0)
+                dy = (ady > 0) ? 1 : -1;
+        }
+        int tempx = x + dx;
+        int tempy = y + dy;
+        if(map.isWalkable(tempx,tempy)){
+            x += dx;
+            y += dy;
+        }
     }
 }

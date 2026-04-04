@@ -3,7 +3,35 @@
 #include <thread>
 #include <unistd.h> 
 #include <cstdlib>
+#include <random>
+#include <vector>
+#include <utility>
 
+namespace {
+
+std::mt19937& gameRng(){
+    static std::mt19937 gen{std::random_device{}()};
+    return gen;
+}
+
+void placeSlimeRandom(Slime& slime, const Map& map, int avoidX, int avoidY){
+    std::vector<std::pair<int, int>> cells;
+    cells.reserve(static_cast<std::size_t>(map.getWidth() * map.getHeight()));
+    for(int yy = 0; yy < map.getHeight(); ++yy){
+        for(int xx = 0; xx < map.getWidth(); ++xx){
+            if(map.isWalkable(xx, yy) && (xx != avoidX || yy != avoidY))
+                cells.emplace_back(xx, yy);
+        }
+    }
+    if(cells.empty())
+        return;
+    std::uniform_int_distribution<std::size_t> dist(0, cells.size() - 1);
+    const auto& pick = cells[dist(gameRng())];
+    slime.x = pick.first;
+    slime.y = pick.second;
+}
+
+} // namespace
 
 static const int KEY_UP    = 1000;
 static const int KEY_DOWN  = 1001;
@@ -69,8 +97,10 @@ void Game::inputMenu(){
             break;
         case '\n':
         case ' ':
-            if(menuSelection == 0) state = GameState::PLAYING;
-            else exit(0);
+            if(menuSelection == 0){
+                placeSlimeRandom(slime, map, player.getX(), player.getY());
+                state = GameState::PLAYING;
+            } else exit(0);
             break;
     }
 }
@@ -150,6 +180,8 @@ bool Game::tryTransition(char dir){
     else if(dir == 'S') player.y = 0;
     else if(dir == 'W') player.x = w - 1;
 
+    placeSlimeRandom(slime, map, player.getX(), player.getY());
+
     return true;
 }
 
@@ -211,6 +243,8 @@ void Game::updatePlaying(){
     if(attackCD > 0){
         attackCD--;
     }
+
+    slime.approach(player, map);
 }
 
 // ===============
