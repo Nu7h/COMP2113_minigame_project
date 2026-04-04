@@ -18,7 +18,7 @@ Run:
 `B` is boss  
 `*` is attacking partical  
 
-##Usage and Controls
+## Usage and Controls
 
 | Key | Action |
 | -------- | -------- |
