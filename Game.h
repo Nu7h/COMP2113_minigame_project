@@ -8,6 +8,7 @@
 #include "Enemy.h"
 #include "Difficulty.h"
 #include <string>
+#include <vector>
 
 class Game {
 public:
@@ -45,7 +46,7 @@ private:
     GameState state = GameState::MENU;
 
     // --- gameplay ---
-    Slime slime;
+    std::vector<Slime> slimes;
     Player player;  
     Map map;
 

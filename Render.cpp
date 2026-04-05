@@ -21,12 +21,14 @@ void Render::drawMenu(int menuSelection){
     fflush(stdout);
 }
 
-void Render::drawGame(const Map& map, const Player& player, const Enemy& enemy, bool isAttacking, int attackX, int attackY){
+void Render::drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, bool isAttacking, int attackX, int attackY){
     clearScreen();
     drawMap(map);
     drawAttack(isAttacking, attackX, attackY);
     drawPlayer(player);
-    drawEnemy(enemy);
+    for (const auto& slime : slimes) {
+        drawEnemy(slime);
+    }
     drawHUD(map);
     fflush(stdout);
 }

@@ -14,6 +14,7 @@ std::mt19937& gameRng(){
     return gen;
 }
 
+
 void placeSlimeRandom(Slime& slime, const Map& map, int avoidX, int avoidY){
     std::vector<std::pair<int, int>> cells;
     cells.reserve(static_cast<std::size_t>(map.getWidth() * map.getHeight()));
@@ -29,6 +30,26 @@ void placeSlimeRandom(Slime& slime, const Map& map, int avoidX, int avoidY){
     const auto& pick = cells[dist(gameRng())];
     slime.x = pick.first;
     slime.y = pick.second;
+}
+
+void spawnSlimes_Difficulty(std::vector<Slime>& slimes, const Map& map, int px, int py, Difficulty difficulty){
+    slimes.clear();
+
+    int numberSlimes = 1;
+    int slimeSpeed = 10;
+    if( difficulty == Difficulty::NORMAL){
+        numberSlimes = 2;
+        slimeSpeed = 8;
+    }else if( difficulty == Difficulty::HARD){
+        numberSlimes= 3;
+        slimeSpeed = 6;
+    }
+    for (int i = 0; i < numberSlimes; i++){
+        Slime s;
+        s.setmaxmoveCooldown(slimeSpeed);
+        placeSlimeRandom(s, map, px, py);
+        slimes.push_back(s);
+    }
 }
 
 } // namespace
@@ -99,7 +120,7 @@ void Game::inputMenu(){
         case ' ':
             if(menuSelection < 3){
                 difficulty = static_cast<Difficulty>(menuSelection);
-                placeSlimeRandom(slime, map, player.getX(), player.getY());
+                spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
                 state = GameState::PLAYING;
             } else exit(0);
             break;
@@ -181,7 +202,7 @@ bool Game::tryTransition(char dir){
     else if(dir == 'S') player.y = 0;
     else if(dir == 'W') player.x = w - 1;
 
-    placeSlimeRandom(slime, map, player.getX(), player.getY());
+    spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
 
     return true;
 }
@@ -245,7 +266,10 @@ void Game::updatePlaying(){
         attackCD--;
     }
 
-    slime.approach(player, map);
+    for(auto& slime : slimes){
+        slime.approach(player, map);
+    }
+    
 }
 
 // ===============
@@ -267,7 +291,7 @@ void Game::renderMenu(){
 }
 
 void Game::renderPlaying(){
-    renderer.drawGame(map, player, slime, isAttacking, attackX, attackY);
+    renderer.drawGame(map, player, slimes, isAttacking, attackX, attackY);
 }
 
 void Game::renderPaused(){

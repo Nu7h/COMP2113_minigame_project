@@ -11,6 +11,7 @@ class Enemy : public Entity {
     public:
         Enemy() : Entity{1, 6} {}
         void approach(const Player& player, const Map& map);
+        void setmaxmoveCooldown(int maxCooldown) {maxmoveCooldown = maxCooldown;}
         int getLastX() const { return lastX; }
         int getLastY() const { return lastY; }
 
@@ -18,7 +19,7 @@ class Enemy : public Entity {
         int lastX = 0;
         int lastY = -1;
         int moveCooldown = 0;
-        static constexpr int maxmoveCooldown = 8;
+        int maxmoveCooldown = 8;
 };
 
 class Slime : public Enemy{

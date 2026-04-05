@@ -4,11 +4,12 @@
 #include "Map.h"
 #include "Player.h"
 #include "Enemy.h"
+#include <vector>
 
 class Render {
 public:
     void drawMenu(int menuSelection);
-    void drawGame(const Map& map, const Player& player, const Enemy& enemy, bool isAttacking, int attackX, int attackY);
+    void drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, bool isAttacking, int attackX, int attackY);
     void drawPauseOverlay();
     void drawGameOver();
     void drawWin();
