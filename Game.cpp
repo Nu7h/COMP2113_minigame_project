@@ -89,15 +89,16 @@ void Game::inputMenu(){
     switch(ch){
         case 'w':
         case KEY_UP:
-            menuSelection = (menuSelection - 1 + 2) % 2;
+            menuSelection = (menuSelection - 1 + menuOptionCount) % menuOptionCount;
             break;
         case 's':
         case KEY_DOWN:
-            menuSelection = (menuSelection + 1) % 2;
+            menuSelection = (menuSelection + 1) % menuOptionCount;
             break;
         case '\n':
         case ' ':
-            if(menuSelection == 0){
+            if(menuSelection < 3){
+                difficulty = static_cast<Difficulty>(menuSelection);
                 placeSlimeRandom(slime, map, player.getX(), player.getY());
                 state = GameState::PLAYING;
             } else exit(0);

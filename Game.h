@@ -6,6 +6,7 @@
 #include "GameState.h"
 #include "Render.h"
 #include "Enemy.h"
+#include "Difficulty.h"
 #include <string>
 
 class Game {
@@ -58,7 +59,9 @@ private:
     Render renderer;
 
     // --- menu ---
+    static constexpr int menuOptionCount = 4;
     int menuSelection = 0;
+    Difficulty difficulty = Difficulty::NORMAL;
 
     // --- room ---
     std::string currentRoom = "room/room0.txt";

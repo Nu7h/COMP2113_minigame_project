@@ -12,9 +12,12 @@ static void clearScreen() {
 void Render::drawMenu(int menuSelection){
     clearScreen();
     moveTo(4, 3); printf("  THE LEGEND OF HKU");
-    moveTo(4, 5); printf("%s Start", menuSelection == 0 ? ">" : " ");
-    moveTo(4, 6); printf("%s Quit",  menuSelection == 1 ? ">" : " ");
-    moveTo(4, 8); printf("W/S to move, Enter to select");
+    moveTo(4, 5); printf("  Select difficulty");
+    moveTo(4, 7); printf("%s EASY",     menuSelection == 0 ? ">" : " ");
+    moveTo(4, 8); printf("%s NORMAL",   menuSelection == 1 ? ">" : " ");
+    moveTo(4, 9); printf("%s HARD",     menuSelection == 2 ? ">" : " ");
+    moveTo(4, 10); printf("%s Quit",    menuSelection == 3 ? ">" : " ");
+    moveTo(4, 12); printf("W/S to move, Enter to select");
     fflush(stdout);
 }
 
