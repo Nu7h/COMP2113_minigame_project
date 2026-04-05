@@ -3,6 +3,7 @@
 
 enum class GameState{
     MENU,
+    DIFF_SELECT,
     PLAYING,
     PAUSED,
     GAME_OVER,
