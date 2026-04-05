@@ -29,3 +29,12 @@ Run:
 | Space bar | Attack |
 | P | Pause | 
 | Q | Quit | 
+
+## Team
+- The Legend of HKU Team
+  - Apinat Ngampanpaisan as **arm35177**
+  - Nattapat Chantarojsiri as **pK69420**
+  - Nuththawat Kitchongcharoenying as **Nu7h**
+  - Patanin Ngaensupalak as **Patanin-ng**
+  - Pattarapon Thepsuthin as **Santaclaus007x**
+  - Supakorn Surarat as **Amp-ss**
