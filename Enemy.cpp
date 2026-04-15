@@ -4,6 +4,7 @@
 using namespace std;
 
 int max_approaching_tiles = 10;
+const int slimeShootCooldownTicks = 20;
 
 void Enemy::approach(const Player& player, const Map& map, const std::vector<Slime>& others){
     if (shootCooldown > 0) {
@@ -14,15 +15,15 @@ void Enemy::approach(const Player& player, const Map& map, const std::vector<Sli
     int py = player.getY();
     int distance = std::abs(px-x) + std::abs(py-y);
 
-    if (distance <= 3){
+    if (distance <= 4){
         if (shootCooldown <= 0){
-            particles.push_back({x, y, (px > x ? 1 : (px < x ? -1 : 0)), (py > y ? 1 : (py < y ? -1 : 0))});
-            shootCooldown = 5;
+            particles.push_back({x, y, (px > x ? 1 : (px < x ? -1 : 0)), (py > y ? 1 : (py < y ? -1 : 0)), 10});
+            shootCooldown = slimeShootCooldownTicks;
         }
         return;
     }
 
-    if(distance > max_approaching_tiles || distance == 3) return;
+    if(distance > max_approaching_tiles || distance == 4) return;
 
     if(moveCooldown > 0){
         moveCooldown--;
@@ -64,8 +65,15 @@ void Enemy::approach(const Player& player, const Map& map, const std::vector<Sli
 
 void Enemy::updateProjectiles(const Map& map, Player& player){
     for ( auto it = particles.begin(); it != particles.end();){
+        if (it->moveCooldown > 0) {
+            it->moveCooldown--;
+            ++it;
+            continue;
+        }
+
         it->x += it->dx;
         it->y += it->dy;
+        it->moveCooldown = 4;
 
         if(it->x == player.getX() && it->y == player.getY()){
             it = particles.erase(it);

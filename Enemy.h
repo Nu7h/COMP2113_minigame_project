@@ -9,8 +9,9 @@ class Player;
 class Slime;
 
 struct slimeProjectile{
-    int x,y;
-    int dx,dy;
+    int x, y;
+    int dx, dy;
+    int moveCooldown = 10;
 };
 
 class Enemy : public Entity {
