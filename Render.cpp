@@ -115,5 +115,9 @@ void Render::drawHUD(const Map& map){
 
 void Render::drawTile(int x, int y, char tile){
     moveTo(x, y);
-    putchar(tile);
+    if(tile == '|' || tile == '_'){
+        printf("\033[1m%c\033[0m", tile); // bold walls
+    } else {
+        putchar(tile);
+    }
 }

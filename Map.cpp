@@ -47,17 +47,11 @@ char Map::getTile(int x, int y) const {
 }
 
 bool Map::isWalkable(int x, int y) const {
-    if (y < 0 || y >= (int)grid.size() || x < 0 || x >= (int)grid[0].size()) {
+    if (y < 0 || y >= (int)grid.size() || x < 0 || x >= (int)grid[0].size())
         return false;
-    }
 
     char tile = grid[y][x];
-
-    if (tile == '#') {
-        return false;
-    }
-
-    return true;
+    return tile != '+' && tile != '-' && tile != '|' && tile != '#';
 }
 
 int Map::getHeight() const{
