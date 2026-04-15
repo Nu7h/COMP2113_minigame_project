@@ -5,7 +5,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include <vector>
-
+#include <algorithm>
 class Render {
 public:
     void drawMenu(int menuSelection);
@@ -22,7 +22,7 @@ private:
     void drawEnemy(const Enemy& enemy);
     void drawProjectile(const slimeProjectile& projectile);
     void drawAttack(bool isAttacking, int attackX, int attackY);
-    void drawHUD(const Map& map);
+    void drawHUD(const Map& map, int hp, int maxHp);
     void drawTile(int x, int y, char tile);
 
 };

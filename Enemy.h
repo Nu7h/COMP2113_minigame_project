@@ -30,6 +30,9 @@ class Enemy : public Entity {
         int moveCooldown = 0;
         int maxmoveCooldown = 8;
         int shootCooldown = 0;
+        int wanderCooldown = 0;
+        int wanderDx = 0;
+        int wanderDy = 0;
 };
 
 

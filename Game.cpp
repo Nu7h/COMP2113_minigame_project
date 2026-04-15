@@ -267,12 +267,13 @@ void Game::update(){
 bool Game::loadGame() {
     std::ifstream f("save.dat");
     if (!f) return false;
-    int px, py, diff;
-    f >> currentRoom >> px >> py >> diff;
+    int px, py, hp, diff;
+    f >> currentRoom >> px >> py >> hp >> diff;
     difficulty = static_cast<Difficulty>(diff);
     map.loadFromFile(currentRoom);
     player.x = px;
     player.y = py;
+    player.hp = hp;
     spawnSlimes_Difficulty(slimes, map, px, py, difficulty);
     return true;
 }
@@ -281,6 +282,7 @@ void Game::saveGame() {
     f << currentRoom << "\n"
       << player.x << "\n"
       << player.y << "\n"
+      << player.hp << "\n"
       << static_cast<int>(difficulty) << "\n";
 }
 void Game::updateMenu()    { /* nothing to tick */ }
@@ -302,6 +304,7 @@ void Game::inputContinue() {
 void Game::updateGameOver(){ /* nothing to tick */ }
 void Game::updateWin()     { /* nothing to tick */ }
 void Game::updatePlaying(){
+    player.updateIFrames();
     if(isAttacking){
         attackTimer--;
         if(attackTimer <= 0){
@@ -327,7 +330,10 @@ void Game::updatePlaying(){
             } else ++e;
         }
     }
-}
+    if (player.hp <= 0){
+        state = GameState::GAME_OVER;
+    }
+}   
 
 // ===============
 //     RENDER

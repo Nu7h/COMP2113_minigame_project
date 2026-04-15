@@ -17,7 +17,7 @@ void Render::drawMenu(int menuSelection){
     moveTo(4, 8); printf("%s NORMAL",   menuSelection == 1 ? ">" : " ");
     moveTo(4, 9); printf("%s HARD",     menuSelection == 2 ? ">" : " ");
     moveTo(4, 10); printf("%s Quit",    menuSelection == 3 ? ">" : " ");
-    moveTo(4, 12); printf("W/S to move, Enter to select");
+    moveTo(4, 12); printf("W/S to move, Enter to select \n\n");
     fflush(stdout);
 }
 
@@ -34,7 +34,7 @@ void Render::drawGame(const Map& map, const Player& player, const std::vector<Sl
         }
     }
     drawPlayer(player);
-    drawHUD(map);
+    drawHUD(map,player.hp, player.maxHp);
     fflush(stdout);
 }
 
@@ -92,8 +92,35 @@ void Render::drawMap(const Map& map){
 }
 
 void Render::drawPlayer(const Player& player){
+    if(player.isBlinking) return; // if taking damage - skip
+
     moveTo(player.x, player.y);
-    putchar('P');
+    int lx = player.getLastX();
+    int ly = player.getLastY();
+
+    if      (lx ==  1) putchar('>');
+    else if (lx == -1) putchar('<');
+    else if (ly == -1) putchar('^');
+    else if (ly ==  1) putchar('v');
+    else               putchar('P'); // hasn't moved yet
+}
+
+
+
+void Render::drawEnemy(const Enemy& slime){
+    moveTo(slime.x, slime.y);
+    putchar('E');
+}
+
+void Render::drawHUD(const Map& map, int hp, int maxHp){
+    moveTo(0, map.getHeight() + 1);
+    int hpClamped = std::max(0, std::min(hp, maxHp));
+    int hearts = (hpClamped * 3) / maxHp;
+    printf("HP: %s%s%s  [%d/%d]  [P]Pause [Q]Quit [SPC]Atk",
+        hearts >= 1 ? "<3" : "< ",
+        hearts >= 2 ? "<3" : "< ",
+        hearts >= 3 ? "<3" : "< ",
+        hp, maxHp);
 }
 
 void Render::drawAttack(bool isAttacking, int attackX, int attackY){
@@ -101,16 +128,6 @@ void Render::drawAttack(bool isAttacking, int attackX, int attackY){
         moveTo(attackX, attackY);
         putchar('*');
     }
-}
-
-void Render::drawEnemy(const Enemy& slime){
-    moveTo(slime.x, slime.y);
-    putchar('E');
-}
-
-void Render::drawHUD(const Map& map){
-    moveTo(0, map.getHeight() + 1);
-    printf("[P] Pause  [Q] Quit  [SPACE] Attack");
 }
 
 void Render::drawTile(int x, int y, char tile){

@@ -11,3 +11,15 @@ void Player::move(int dx, int dy, const Map& map){
         y += dy;
     }
 }
+
+bool Player::takeDamage(int dmg){
+    if(iFrames > 0) return false;  // invincible, ignore hit
+    hp -= dmg;
+    iFrames = 40;                  // ~2 seconds at 50ms tick
+    return true;
+}
+
+void Player::updateIFrames(){
+    if(iFrames > 0) iFrames--;
+    isBlinking = (iFrames > 0) && ((iFrames / 4) % 2 == 0); // blink every 4 ticks
+}
