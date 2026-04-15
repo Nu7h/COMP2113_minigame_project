@@ -6,26 +6,38 @@
 #include "Player.h"
 
 class Player;
+class Slime;
+
+struct slimeProjectile{
+    int x,y;
+    int dx,dy;
+};
 
 class Enemy : public Entity {
     public:
         Enemy() : Entity{1, 6} {}
-        void approach(const Player& player, const Map& map);
+        void approach(const Player& player, const Map& map,const std::vector<Slime>& others);
         void setmaxmoveCooldown(int maxCooldown) {maxmoveCooldown = maxCooldown;}
+        void updateProjectiles(const Map& map, Player& player);
         int getLastX() const { return lastX; }
         int getLastY() const { return lastY; }
+        std::vector<slimeProjectile> particles;
 
     private:
         int lastX = 0;
         int lastY = -1;
         int moveCooldown = 0;
         int maxmoveCooldown = 8;
+        int shootCooldown = 0;
 };
+
 
 class Slime : public Enemy{
 
-    private:
+    public:
         int hp = 100;
+
+    private:
         int min_atk = 0;
         int max_atk = 10;
 };

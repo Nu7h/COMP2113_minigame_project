@@ -15,13 +15,24 @@ std::mt19937& gameRng(){
 }
 
 
-void placeSlimeRandom(Slime& slime, const Map& map, int avoidX, int avoidY){
+void placeSlimeRandom(Slime& slime, const Map& map, int avoidX, int avoidY, const std::vector<Slime>& existingSlimes){
     std::vector<std::pair<int, int>> cells;
     cells.reserve(static_cast<std::size_t>(map.getWidth() * map.getHeight()));
     for(int yy = 0; yy < map.getHeight(); ++yy){
         for(int xx = 0; xx < map.getWidth(); ++xx){
-            if(map.isWalkable(xx, yy) && (xx != avoidX || yy != avoidY))
+            if(!map.isWalkable(xx, yy) || (xx == avoidX && yy == avoidY))
+                continue;
+
+            bool occupied = false;
+            for (const auto& other : existingSlimes){
+                if(other.x == xx && other.y == yy){
+                    occupied = true;
+                    break;
+                }
+            }
+            if(!occupied){
                 cells.emplace_back(xx, yy);
+            }
         }
     }
     if(cells.empty())
@@ -47,7 +58,7 @@ void spawnSlimes_Difficulty(std::vector<Slime>& slimes, const Map& map, int px, 
     for (int i = 0; i < numberSlimes; i++){
         Slime s;
         s.setmaxmoveCooldown(slimeSpeed);
-        placeSlimeRandom(s, map, px, py);
+        placeSlimeRandom(s, map, px, py, slimes);
         slimes.push_back(s);
     }
 }
@@ -267,9 +278,19 @@ void Game::updatePlaying(){
     }
 
     for(auto& slime : slimes){
-        slime.approach(player, map);
+        slime.approach(player, map, slimes);
+        slime.updateProjectiles(map, player);
     }
-    
+
+    if (isAttacking) {
+        for (auto e = slimes.begin(); e != slimes.end(); ) {
+            if (e->x == attackX && e->y == attackY) {
+                e->hp -= 20; // 5 hits to kill (100/20)
+                if (e->hp <= 0) e = slimes.erase(e);
+                else ++e;
+            } else ++e;
+        }
+    }
 }
 
 // ===============

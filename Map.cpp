@@ -3,18 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-Map::Map() {
-    grid = {
-        "#############",
-        "#...........#",
-        "#...........#",
-        "#....#......#",
-        "#...........#",
-        "#...........#",
-        "#...........#",
-        "#############"
-    };
-}
+Map::Map() = default;
 
 bool Map::loadFromFile(const std::string& path) {
     std::ifstream in(path);

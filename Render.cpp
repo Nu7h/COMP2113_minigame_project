@@ -25,12 +25,22 @@ void Render::drawGame(const Map& map, const Player& player, const std::vector<Sl
     clearScreen();
     drawMap(map);
     drawAttack(isAttacking, attackX, attackY);
-    drawPlayer(player);
     for (const auto& slime : slimes) {
         drawEnemy(slime);
     }
+    for (const auto& slime : slimes) {
+        for (const auto& projectile : slime.particles) {
+            drawProjectile(projectile);
+        }
+    }
+    drawPlayer(player);
     drawHUD(map);
     fflush(stdout);
+}
+
+void Render::drawProjectile(const slimeProjectile& projectile){
+    moveTo(projectile.x, projectile.y);
+    putchar('o');
 }
 
 void Render::drawPauseOverlay(){
