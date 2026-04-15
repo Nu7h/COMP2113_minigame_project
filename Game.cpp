@@ -6,6 +6,7 @@
 #include <random>
 #include <vector>
 #include <utility>
+#include <fstream> 
 
 namespace {
 
@@ -113,6 +114,8 @@ void Game::input(){
         case GameState::PAUSED:   inputPaused();  break;
         case GameState::GAME_OVER:inputGameOver();break;
         case GameState::WIN:      inputWin();     break;
+        case GameState::SAVING:    inputSaving();   break;
+        case GameState::CONTINUE:  inputContinue(); break;
     }
 }
 
@@ -145,7 +148,7 @@ void Game::inputPlaying(){
     bool moved = false;
 
     switch(ch){
-        case 'q': exit(0);
+        case 'q': state = GameState::SAVING; break;
         case 'p': state = GameState::PAUSED; break;
 
         case 'w': dx =  0; dy = -1; moved = true; break;
@@ -221,8 +224,8 @@ bool Game::tryTransition(char dir){
 void Game::inputPaused(){
     int ch = readKey();
     switch(ch){
-        case 'p': state = GameState::PLAYING; break;
-        case 'q': exit(0);
+        case 'p': case 'P': state = GameState::PLAYING; break;
+        case 'q': case 'Q': state = GameState::SAVING; break;
     }
 }
 
@@ -257,14 +260,47 @@ void Game::update(){
         case GameState::PAUSED:   updatePaused();   break;
         case GameState::GAME_OVER:updateGameOver(); break;
         case GameState::WIN:      updateWin();      break;
+        case GameState::SAVING:    break;
+        case GameState::CONTINUE:  break;
     }
 }
-
+bool Game::loadGame() {
+    std::ifstream f("save.dat");
+    if (!f) return false;
+    int px, py, diff;
+    f >> currentRoom >> px >> py >> diff;
+    difficulty = static_cast<Difficulty>(diff);
+    map.loadFromFile(currentRoom);
+    player.x = px;
+    player.y = py;
+    spawnSlimes_Difficulty(slimes, map, px, py, difficulty);
+    return true;
+}
+void Game::saveGame() {
+    std::ofstream f("save.dat");
+    f << currentRoom << "\n"
+      << player.x << "\n"
+      << player.y << "\n"
+      << static_cast<int>(difficulty) << "\n";
+}
 void Game::updateMenu()    { /* nothing to tick */ }
 void Game::updatePaused()  { /* freeze evrytng  */ }
+void Game::inputSaving() {
+    int ch = readKey();
+    if (ch == 'y' || ch == 'Y') { saveGame(); exit(0); }
+    if (ch == 'n' || ch == 'N') { exit(0); }
+}
+void Game::inputContinue() {
+    int ch = readKey();
+    if (ch == 'y' || ch == 'Y') {
+        if (loadGame()) state = GameState::PLAYING;
+    } else if (ch == 'n' || ch == 'N') {
+        std::remove("save.dat");
+        state = GameState::MENU;
+    }
+}
 void Game::updateGameOver(){ /* nothing to tick */ }
 void Game::updateWin()     { /* nothing to tick */ }
-
 void Game::updatePlaying(){
     if(isAttacking){
         attackTimer--;
@@ -285,7 +321,7 @@ void Game::updatePlaying(){
     if (isAttacking) {
         for (auto e = slimes.begin(); e != slimes.end(); ) {
             if (e->x == attackX && e->y == attackY) {
-                e->hp -= 20; // 5 hits to kill (100/20)
+                e->hp -= 10; // 5 hits to kill (100/20)
                 if (e->hp <= 0) e = slimes.erase(e);
                 else ++e;
             } else ++e;
@@ -304,6 +340,8 @@ void Game::render(){
         case GameState::PAUSED:   renderPaused();   break;
         case GameState::GAME_OVER:renderGameOver(); break;
         case GameState::WIN:      renderWin();      break;
+        case GameState::SAVING:    renderSaving();   break;
+        case GameState::CONTINUE:  renderContinue(); break;
     }  
 }
 
@@ -327,9 +365,18 @@ void Game::renderWin(){
     renderer.drawWin();
 }
 
-Game::Game(){
-    if(!map.loadFromFile(currentRoom)){
-        exit(1);
-    }
+void Game::renderSaving(){
+    renderer.drawSavePrompt();
+}
+
+void Game::renderContinue(){
+    renderer.drawContinuePrompt();
+}
+
+Game::Game() {
+    if (!map.loadFromFile(currentRoom)) exit(1);
+    std::ifstream f("save.dat");
+    if (f.good()) state = GameState::CONTINUE; // show continue prompt first
+    else state = GameState::MENU;
 }
 

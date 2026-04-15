@@ -64,6 +64,21 @@ void Render::drawWin(){
     fflush(stdout);
 }
 
+void Render::drawSavePrompt(){
+    clearScreen();
+    moveTo(4, 3); printf("Save progress before quitting?");
+    moveTo(4, 5); printf("[Y] Yes   [N] No\n\n");
+    fflush(stdout);
+}
+
+void Render::drawContinuePrompt(){
+    clearScreen();
+    moveTo(4, 3); printf("Save file found!");
+    moveTo(4, 5); printf("Continue from where you left off?");
+    moveTo(4, 7); printf("[Y] Yes   [N] No (start fresh)");
+    fflush(stdout);
+}
+
 // ===============
 //     PRIVATE
 // ===============

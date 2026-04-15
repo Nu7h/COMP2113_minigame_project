@@ -13,6 +13,8 @@ public:
     void drawPauseOverlay();
     void drawGameOver();
     void drawWin();
+    void drawSavePrompt();
+    void drawContinuePrompt();
 
 private:
     void drawMap(const Map& map);

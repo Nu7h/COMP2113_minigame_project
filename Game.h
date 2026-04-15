@@ -42,6 +42,17 @@ private:
     void renderGameOver();
     void renderWin();
 
+    // --- save game ---
+    void inputSaving();
+    void inputContinue();
+    void updateSaving();
+    void updateContinue();
+    void renderSaving();
+    void renderContinue();
+
+    void saveGame();
+    bool loadGame();
+
     // --- state ---
     GameState state = GameState::MENU;
 
