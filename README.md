@@ -62,6 +62,7 @@ Run:
 ### Room Transitions
 - Rooms are connected via north/east/south/west exits
 - Walk to the edge of a room to automatically transition to the next room
+- Enemies respawn when entering a new room
 
 ### Enemy Behavior
 Enemies have different behaviors depending on the situation. 
