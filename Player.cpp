@@ -21,5 +21,5 @@ bool Player::takeDamage(int dmg){
 
 void Player::updateIFrames(){
     if(iFrames > 0) iFrames--;
-    isBlinking = (iFrames > 0) && ((iFrames / 4) % 2 == 0); // blink every 4 ticks
+    isBlinking = (iFrames > 0) && ((iFrames / 4) % 2 == 0);
 }
