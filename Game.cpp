@@ -44,24 +44,30 @@ void placeSlimeRandom(Slime& slime, const Map& map, int avoidX, int avoidY, cons
     slime.y = pick.second;
 }
 
-void spawnSlimes_Difficulty(std::vector<Slime>& slimes, const Map& map, int px, int py, Difficulty difficulty){
+void spawnSlimes_Count(std::vector<Slime>& slimes, const Map& map, int px, int py, Difficulty difficulty, int count){
     slimes.clear();
-
-    int numberSlimes = 1;
     int slimeSpeed = 10;
     if( difficulty == Difficulty::NORMAL){
-        numberSlimes = 2;
         slimeSpeed = 8;
     }else if( difficulty == Difficulty::HARD){
-        numberSlimes= 3;
         slimeSpeed = 6;
     }
-    for (int i = 0; i < numberSlimes; i++){
+    for (int i = 0; i < count; i++){
         Slime s;
         s.setmaxmoveCooldown(slimeSpeed);
         placeSlimeRandom(s, map, px, py, slimes);
         slimes.push_back(s);
     }
+}
+
+void spawnSlimes_Difficulty(std::vector<Slime>& slimes, const Map& map, int px, int py, Difficulty difficulty){
+    int numberSlimes = 1;
+    if( difficulty == Difficulty::NORMAL){
+        numberSlimes = 2;
+    }else if( difficulty == Difficulty::HARD){
+        numberSlimes= 3;
+    }
+    spawnSlimes_Count(slimes, map, px, py, difficulty, numberSlimes);
 }
 
 } // namespace
@@ -135,6 +141,13 @@ void Game::inputMenu(){
             if(menuSelection < 3){
                 difficulty = static_cast<Difficulty>(menuSelection);
                 spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
+                numRoomSaves = 0;
+                int rNum = 0;
+                if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
+                    roomSaves[numRoomSaves].roomNumber = rNum;
+                    roomSaves[numRoomSaves].slimesLeft = slimes.size();
+                    numRoomSaves++;
+                }
                 state = GameState::PLAYING;
             } else exit(0);
             break;
@@ -216,7 +229,29 @@ bool Game::tryTransition(char dir){
     else if(dir == 'S') player.y = 0;
     else if(dir == 'W') player.x = w - 1;
 
-    spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
+    int rNum = 0;
+    if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
+        int savedSlimes = -1;
+        for(int i = 0; i < numRoomSaves; i++) {
+            if(roomSaves[i].roomNumber == rNum) {
+                savedSlimes = roomSaves[i].slimesLeft;
+                break;
+            }
+        }
+
+        if (savedSlimes == -1) {
+            spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
+            if (numRoomSaves < 100) {
+                roomSaves[numRoomSaves].roomNumber = rNum;
+                roomSaves[numRoomSaves].slimesLeft = slimes.size();
+                numRoomSaves++;
+            }
+        } else {
+            spawnSlimes_Count(slimes, map, player.getX(), player.getY(), difficulty, savedSlimes);
+        }
+    } else {
+        spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
+    }
 
     return true;
 }
@@ -274,7 +309,29 @@ bool Game::loadGame() {
     player.x = px;
     player.y = py;
     player.hp = hp;
-    spawnSlimes_Difficulty(slimes, map, px, py, difficulty);
+    
+    if (f >> numRoomSaves) {
+        for (int i = 0; i < numRoomSaves; ++i) {
+            f >> roomSaves[i].roomNumber >> roomSaves[i].slimesLeft;
+        }
+    } else {
+        numRoomSaves = 0;
+    }
+    
+    int rNum = 0;
+    int spawned = 0;
+    if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
+        for(int i = 0; i < numRoomSaves; i++) {
+            if(roomSaves[i].roomNumber == rNum) {
+                spawnSlimes_Count(slimes, map, px, py, difficulty, roomSaves[i].slimesLeft);
+                spawned = 1;
+                break;
+            }
+        }
+    }
+    if (!spawned) {
+        spawnSlimes_Difficulty(slimes, map, px, py, difficulty);
+    }
     return true;
 }
 void Game::saveGame() {
@@ -283,7 +340,11 @@ void Game::saveGame() {
       << player.x << "\n"
       << player.y << "\n"
       << player.hp << "\n"
-      << static_cast<int>(difficulty) << "\n";
+      << static_cast<int>(difficulty) << "\n"
+      << numRoomSaves << "\n";
+    for (int i = 0; i < numRoomSaves; ++i) {
+        f << roomSaves[i].roomNumber << " " << roomSaves[i].slimesLeft << "\n";
+    }
 }
 void Game::updateMenu()    { /* nothing to tick */ }
 void Game::updatePaused()  { /* freeze evrytng  */ }
@@ -325,7 +386,18 @@ void Game::updatePlaying(){
         for (auto e = slimes.begin(); e != slimes.end(); ) {
             if (e->x == attackX && e->y == attackY) {
                 e->hp -= 10; // 5 hits to kill (100/20)
-                if (e->hp <= 0) e = slimes.erase(e);
+                if (e->hp <= 0) {
+                    e = slimes.erase(e);
+                    int rNum = 0;
+                    if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
+                        for(int i = 0; i < numRoomSaves; i++) {
+                            if(roomSaves[i].roomNumber == rNum) {
+                                roomSaves[i].slimesLeft--;
+                                break;
+                            }
+                        }
+                    }
+                }
                 else ++e;
             } else ++e;
         }

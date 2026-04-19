@@ -83,6 +83,14 @@ private:
     bool tryTransition(char dir);
     void handleRoomTransition();
 
+    struct RoomSaveData {
+        int roomNumber;
+        int slimesLeft;
+    };
+    RoomSaveData roomSaves[100];
+    int numRoomSaves = 0;
+
+
 };
 
 #endif
