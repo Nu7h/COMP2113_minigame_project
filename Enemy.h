@@ -8,6 +8,8 @@
 class Player;
 class Slime;
 
+
+
 struct slimeProjectile{
     int x, y;
     int dx, dy;
