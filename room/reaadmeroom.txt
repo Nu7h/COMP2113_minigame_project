@@ -1,0 +1,7 @@
+1 scene = ฉากเริ่ม
+2 scene = อยู่ในลิฟท์
+3 scene = ลิฟท์ขึ้นแต่ละเฟรม
+4 scene = ไฟกระพริบ
+4 scene black = ไฟดับ
+5 scene = wizard appeared
+*Far left person has to be cyan
