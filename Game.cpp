@@ -222,6 +222,12 @@ bool Game::tryTransition(char dir){
 
     currentRoom = next_path;
 
+    // Clean up old boss if exists
+    if (boss != nullptr) {
+        delete boss;
+        boss = nullptr;
+    }
+
     int w = map.getWidth();
     int h = map.getHeight();
 
@@ -232,23 +238,32 @@ bool Game::tryTransition(char dir){
 
     int rNum = 0;
     if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
-        int savedSlimes = -1;
-        for(int i = 0; i < numRoomSaves; i++) {
-            if(roomSaves[i].roomNumber == rNum) {
-                savedSlimes = roomSaves[i].slimesLeft;
-                break;
-            }
-        }
-
-        if (savedSlimes == -1) {
-            spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
-            if (numRoomSaves < 100) {
-                roomSaves[numRoomSaves].roomNumber = rNum;
-                roomSaves[numRoomSaves].slimesLeft = slimes.size();
-                numRoomSaves++;
-            }
+        // Special handling for room 3 - spawn boss instead of slimes
+        if (rNum == 3) {
+            slimes.clear();
+            boss = new Boss();
+            boss->x = w / 2;
+            boss->y = h / 2;
         } else {
-            spawnSlimes_Count(slimes, map, player.getX(), player.getY(), difficulty, savedSlimes);
+            // Regular slime spawning for other rooms
+            int savedSlimes = -1;
+            for(int i = 0; i < numRoomSaves; i++) {
+                if(roomSaves[i].roomNumber == rNum) {
+                    savedSlimes = roomSaves[i].slimesLeft;
+                    break;
+                }
+            }
+
+            if (savedSlimes == -1) {
+                spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
+                if (numRoomSaves < 100) {
+                    roomSaves[numRoomSaves].roomNumber = rNum;
+                    roomSaves[numRoomSaves].slimesLeft = slimes.size();
+                    numRoomSaves++;
+                }
+            } else {
+                spawnSlimes_Count(slimes, map, player.getX(), player.getY(), difficulty, savedSlimes);
+            }
         }
     } else {
         spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
@@ -272,6 +287,10 @@ void Game::inputGameOver(){
         currentRoom = "room/room0.txt";
         map.loadFromFile(currentRoom);
         slimes.clear();
+        if (boss != nullptr) {
+            delete boss;
+            boss = nullptr;
+        }
         numRoomSaves = 0;
         isAttacking   = false;
         attackTimer   = 0;
@@ -284,6 +303,15 @@ void Game::inputGameOver(){
 void Game::inputWin(){
     int ch = readKey();
     if(ch == '\n' || ch == ' '){
+        player = Player();
+        currentRoom = "room/room0.txt";
+        map.loadFromFile(currentRoom);
+        slimes.clear();
+        if (boss != nullptr) {
+            delete boss;
+            boss = nullptr;
+        }
+        numRoomSaves = 0;
         menuSelection = 0;
         state = GameState::MENU;
     }
@@ -383,31 +411,49 @@ void Game::updatePlaying(){
         attackCD--;
     }
 
-    for(auto& slime : slimes){
-        slime.approach(player, map, slimes);
-        slime.updateProjectiles(map, player);
-    }
+    // Update boss if in boss room
+    if (boss != nullptr) {
+        boss->updateBoss(player, map);
+        boss->updateBossProjectiles(map, player);
+        
+        // Handle player attack on boss - check hitbox for all body parts
+        if (isAttacking && boss->isHitByAttack(attackX, attackY)) {
+            boss->hp -= 50;
+            if (boss->hp <= 0) {
+                delete boss;
+                boss = nullptr;
+                state = GameState::WIN;
+            }
+        }
+    } else {
+        // Normal slime handling when not in boss room
+        for(auto& slime : slimes){
+            slime.approach(player, map, slimes);
+            slime.updateProjectiles(map, player);
+        }
 
-    if (isAttacking) {
-        for (auto e = slimes.begin(); e != slimes.end(); ) {
-            if (e->x == attackX && e->y == attackY) {
-                e->hp -= 10; // 5 hits to kill (100/20)
-                if (e->hp <= 0) {
-                    e = slimes.erase(e);
-                    int rNum = 0;
-                    if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
-                        for(int i = 0; i < numRoomSaves; i++) {
-                            if(roomSaves[i].roomNumber == rNum) {
-                                roomSaves[i].slimesLeft--;
-                                break;
+        if (isAttacking) {
+            for (auto e = slimes.begin(); e != slimes.end(); ) {
+                if (e->x == attackX && e->y == attackY) {
+                    e->hp -= 10; // 5 hits to kill (100/20)
+                    if (e->hp <= 0) {
+                        e = slimes.erase(e);
+                        int rNum = 0;
+                        if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
+                            for(int i = 0; i < numRoomSaves; i++) {
+                                if(roomSaves[i].roomNumber == rNum) {
+                                    roomSaves[i].slimesLeft--;
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-                else ++e;
-            } else ++e;
+                    else ++e;
+                } else ++e;
+            }
         }
     }
+
     if (player.hp <= 0){
         state = GameState::GAME_OVER;
     }
@@ -434,7 +480,7 @@ void Game::renderMenu(){
 }
 
 void Game::renderPlaying(){
-    renderer.drawGame(map, player, slimes, isAttacking, attackX, attackY);
+    renderer.drawGame(map, player, slimes, boss, isAttacking, attackX, attackY);
 }
 
 void Game::renderPaused(){
@@ -462,5 +508,12 @@ Game::Game() {
     std::ifstream f("save.dat");
     if (f.good()) state = GameState::CONTINUE; // show continue prompt first
     else state = GameState::MENU;
+}
+
+Game::~Game() {
+    if (boss != nullptr) {
+        delete boss;
+        boss = nullptr;
+    }
 }
 

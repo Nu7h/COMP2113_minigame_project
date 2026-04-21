@@ -7,7 +7,7 @@
 
 class Player;
 class Slime;
-
+class Boss;
 
 
 struct slimeProjectile{
@@ -43,16 +43,69 @@ class Slime : public Enemy{
     public:
         int hp = 100;
 
-    private:
-        int min_atk = 0;
-        int max_atk = 10;
+};
+
+struct bossProjectile {
+    int x, y;
+    int dx, dy;
+    int moveCooldown = 10;
 };
 
 class Boss : public Enemy{
-    private:
+
+    public:
+        Boss() : Enemy() {}
         int hp = 1000;
-        int min_atk = 10;
-        int max_atk = 40;
-        int healing = 10;
+        int maxHp = 1000;
+        std::vector<bossProjectile> bossProjectiles;
+        
+        // Boss behavior methods
+        void updateBoss(const Player& player, const Map& map);
+        void updateBossProjectiles(const Map& map, Player& player);
+        
+        // Getters
+        int getAttackPhase() const { return attackPhase; }
+        bool isInRageMode() const { return hp <= 250; }  // 25% of 1000
+        bool isVulnerable() const { return vulnerableTimer > 0; }
+        int getVulnerableTimer() const { return vulnerableTimer; }
+        int getRageJumpCount() const { return rageJumpCount; }
+        
+        // Hitbox check - returns true if (attackX, attackY) hits a valid body part
+        bool isHitByAttack(int attackX, int attackY) const {
+            // Head (0)
+            if (attackX == x && attackY == y) return true;
+            
+            // Body (|)
+            if (attackX == x && attackY == y + 1) return true;
+            
+            // Arms (/ \)
+            if (attackX == x - 1 && attackY == y + 1) return true;  // Left arm
+            if (attackX == x + 1 && attackY == y + 1) return true;  // Right arm
+            
+            // Legs (/ \)
+            if (attackX == x - 1 && attackY == y + 2) return true;  // Left leg
+            if (attackX == x + 1 && attackY == y + 2) return true;  // Right leg
+            
+            return false;
+        }
+        
+    private:
+        // Attack pattern tracking
+        int attackCooldown = 0;
+        int shootCooldown = 0;
+        int jumpCooldown = 0;
+        int attackPhase = 0;  // counts attacks to determine pattern
+        int lastPlayerX = 0;
+        int lastPlayerY = 0;
+        
+        // Rage mode tracking
+        int rageJumpCount = 0;    // count jumps in rage mode
+        int vulnerableTimer = 0;   // countdown for vulnerable state
+        
+        // Constants for timing (assuming 50ms per tick)
+        static constexpr int NORMAL_SHOOT_TICKS = 100;  // 5 seconds
+        static constexpr int RAGE_SHOOT_TICKS = 70;     // 3.5 seconds
+        static constexpr int JUMP_TICKS = 40;           // ~2 seconds for jump
+        static constexpr int VULNERABLE_DURATION = 60;  // 3 seconds
 };
 #endif

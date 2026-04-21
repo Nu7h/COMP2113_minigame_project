@@ -9,7 +9,7 @@
 class Render {
 public:
     void drawMenu(int menuSelection);
-    void drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, bool isAttacking, int attackX, int attackY);
+    void drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY);
     void drawPauseOverlay();
     void drawGameOver();
     void drawWin();
@@ -20,9 +20,11 @@ private:
     void drawMap(const Map& map);
     void drawPlayer(const Player& player);
     void drawEnemy(const Enemy& enemy);
+    void drawBoss(const class Boss& boss);
     void drawProjectile(const slimeProjectile& projectile);
+    void drawBossProjectile(const struct bossProjectile& projectile);
     void drawAttack(bool isAttacking, int attackX, int attackY, int lastX);
-    void drawHUD(const Map& map, int hp, int maxHp);
+    void drawHUD(const Map& map, int hp, int maxHp, class Boss* boss);
     void drawTile(int x, int y, char tile);
 
 };
