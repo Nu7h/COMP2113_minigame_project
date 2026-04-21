@@ -34,7 +34,7 @@ void Render::drawMenu(int menuSelection){
 void Render::drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, bool isAttacking, int attackX, int attackY){
     clearScreen();
     drawMap(map);
-    drawAttack(isAttacking, attackX, attackY);
+    drawAttack(isAttacking, attackX, attackY, player.getLastX());
     for (const auto& slime : slimes) {
         drawEnemy(slime);
     }
@@ -115,6 +115,17 @@ void Render::drawPlayer(const Player& player){
     else if (ly ==  1) symbol = 'v';
 
     printf(COLOR_BGREEN COLOR_BOLD "%c" COLOR_RESET, symbol);
+
+    if(player.isShielding){
+        int sx = player.x + player.getLastX();
+        int sy = player.y + player.getLastY();
+        moveTo(sx, sy);
+        if(ly != 0){
+        printf(COLOR_CYAN COLOR_BOLD "─" COLOR_RESET); // top/bottom shield
+        } else {
+            printf(COLOR_CYAN COLOR_BOLD "|" COLOR_RESET); // left/right shield
+        }
+    }
 }
 
 void Render::drawEnemy(const Enemy& slime){
@@ -128,25 +139,27 @@ void Render::drawHUD(const Map& map, int hp, int maxHp){
     int hearts = (hpClamped * 3) / maxHp;
 
     const char* hpColor = COLOR_BGREEN;
-    if(hearts == 2) hpColor = COLOR_BYELLOW;
-    if(hearts <= 1) hpColor = COLOR_BRED;
+    if(hearts == 1) hpColor = COLOR_BYELLOW;
+    if(hearts <= 0) hpColor = COLOR_BRED;
 
     printf("%sHP: %s%s%s  [%d/%d]%s  "
            COLOR_CYAN "[P]" COLOR_RESET "Pause "
            COLOR_CYAN "[Q]" COLOR_RESET "Quit "
-           COLOR_CYAN "[SPC]" COLOR_RESET "Atk",
+           COLOR_CYAN "[SPC]" COLOR_RESET "Atk "
+           COLOR_CYAN "[C]" COLOR_RESET "Def",
         hpColor,
+        hearts >= 0 ? "<3" : "  ",
         hearts >= 1 ? "<3" : "  ",
         hearts >= 2 ? "<3" : "  ",
-        hearts >= 3 ? "<3" : "  ",
         hp, maxHp,
         COLOR_RESET);
 }
 
-void Render::drawAttack(bool isAttacking, int attackX, int attackY){
+void Render::drawAttack(bool isAttacking, int attackX, int attackY, int lastX){
     if(isAttacking){
         moveTo(attackX, attackY);
-        printf(COLOR_BYELLOW COLOR_BOLD "*" COLOR_RESET);
+        if(lastX != 0)  printf(COLOR_BYELLOW COLOR_BOLD "─" COLOR_RESET); // right
+        else  printf(COLOR_BYELLOW COLOR_BOLD "|" COLOR_RESET); // fallback
     }
 }
 

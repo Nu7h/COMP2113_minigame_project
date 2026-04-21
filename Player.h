@@ -16,7 +16,13 @@ public:
     int maxHp = 100;
     int iFrames = 0;          // ticks of invincibility remaining
     bool isBlinking = false; 
+    bool isShielding = false;
+    int shieldTimer = 0;
+    static constexpr int shieldDuration = 10;
     bool takeDamage(int dmg);
+    void activateShield();
+    void updateShield();
+    bool blockProjectile(int projX, int projY) const;
 
 private:
     int lastX = 0;

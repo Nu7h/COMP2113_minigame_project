@@ -23,3 +23,25 @@ void Player::updateIFrames(){
     if(iFrames > 0) iFrames--;
     isBlinking = (iFrames > 0) && ((iFrames / 4) % 2 == 0);
 }
+
+void Player::activateShield(){
+    if(shieldTimer <= 0){   // can only shield if not already active
+        isShielding = true;
+        shieldTimer = shieldDuration;
+    }
+}
+
+void Player::updateShield(){
+    if(shieldTimer > 0){
+        shieldTimer--;
+        if(shieldTimer <= 0)
+            isShielding = false;
+    }
+}
+
+bool Player::blockProjectile(int projX, int projY) const {
+    if(!isShielding) return false;
+    int sx = x + lastX;
+    int sy = y + lastY;
+    return projX == sx && projY == sy;
+}

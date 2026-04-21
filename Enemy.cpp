@@ -97,6 +97,8 @@ void Enemy::updateProjectiles(const Map& map, Player& player){
         if(it->x == player.getX() && it->y == player.getY()){
             player.takeDamage(10);
             it = particles.erase(it);
+        } else if(player.blockProjectile(it->x, it->y)){
+            it = particles.erase(it);
         } else if (!map.isWalkable(it->x, it->y)){
             it = particles.erase(it);
         } else {

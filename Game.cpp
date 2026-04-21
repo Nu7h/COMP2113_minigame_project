@@ -128,11 +128,11 @@ void Game::input(){
 void Game::inputMenu(){
     int ch = readKey();
     switch(ch){
-        case 'w':
+        case 'w': case 'W':
         case KEY_UP:
             menuSelection = (menuSelection - 1 + menuOptionCount) % menuOptionCount;
             break;
-        case 's':
+        case 's': case 'S':
         case KEY_DOWN:
             menuSelection = (menuSelection + 1) % menuOptionCount;
             break;
@@ -161,15 +161,16 @@ void Game::inputPlaying(){
     bool moved = false;
 
     switch(ch){
-        case 'q': state = GameState::SAVING; break;
-        case 'p': state = GameState::PAUSED; break;
-
-        case 'w': dx =  0; dy = -1; moved = true; break;
-        case 's': dx =  0; dy =  1; moved = true; break;
-        case 'a': dx = -1; dy =  0; moved = true; break;
-        case 'd': dx =  1; dy =  0; moved = true; break;
-        case 'e': transition = true; break;
-
+        case 'q': case 'Q': state = GameState::SAVING; break;
+        case 'p': case 'P': state = GameState::PAUSED; break;
+        case 'w': case 'W': dx =  0; dy = -1; moved = true; break;
+        case 's': case 'S': dx =  0; dy =  1; moved = true; break;
+        case 'a': case 'A': dx = -1; dy =  0; moved = true; break;
+        case 'd': case 'D': dx =  1; dy =  0; moved = true; break;
+        case 'e': case 'E': transition = true; break;
+        case 'c': case 'C':
+            player.activateShield();
+            break;
         case ' ':
             if(!isAttacking && attackCD <= 0){
                 int ax = player.getLastX() + player.getX();
@@ -186,9 +187,9 @@ void Game::inputPlaying(){
             break;
     }
     
-    if(moved){
-        player.move(dx, dy, map);
-        handleRoomTransition();
+    if(moved && !player.isShielding){
+    player.move(dx, dy, map);
+    handleRoomTransition();
     }
 
 }
@@ -366,6 +367,7 @@ void Game::updateGameOver(){ /* nothing to tick */ }
 void Game::updateWin()     { /* nothing to tick */ }
 void Game::updatePlaying(){
     player.updateIFrames();
+    player.updateShield();
     if(isAttacking){
         attackTimer--;
         if(attackTimer <= 0){

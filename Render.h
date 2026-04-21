@@ -21,7 +21,7 @@ private:
     void drawPlayer(const Player& player);
     void drawEnemy(const Enemy& enemy);
     void drawProjectile(const slimeProjectile& projectile);
-    void drawAttack(bool isAttacking, int attackX, int attackY);
+    void drawAttack(bool isAttacking, int attackX, int attackY, int lastX);
     void drawHUD(const Map& map, int hp, int maxHp);
     void drawTile(int x, int y, char tile);
 
