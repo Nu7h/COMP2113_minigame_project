@@ -269,6 +269,10 @@ void Game::inputGameOver(){
     int ch = readKey();
     if(ch == ' ' || ch == '\n'){
         player = Player();
+        currentRoom = "room/room0.txt";
+        map.loadFromFile(currentRoom);
+        slimes.clear();
+        numRoomSaves = 0;
         isAttacking   = false;
         attackTimer   = 0;
         attackCD = 0;
