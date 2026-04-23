@@ -1,4 +1,4 @@
-   You recived a ^Rsword!^r and a ^Rshield!^r
+  You recived a ^Rsword!^r and a ^Rshield!^r
 +-------------------------------------+^r
 |           ^y.                         ^r|
 |          ^y/ \                        ^r|
