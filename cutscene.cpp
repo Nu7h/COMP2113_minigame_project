@@ -202,9 +202,9 @@ int main() {
     playScene("room/4 scene load.txt", 2);
 
     // dialogue
-    for (int i = 1; i <= 3; i++) {
-        dialogue("room/5 scene.txt", "room/5 scene dialogue.txt", 0.02, 0.5, i);
-        waitSeconds(1.5);
+    for (int i = 1; i <= 6; i++) {
+        dialogue("room/5 scene.txt", "room/5 scene dialogue.txt", 0.02, 0, i);
+        waitSeconds(2);
     }
 
     // final scene
