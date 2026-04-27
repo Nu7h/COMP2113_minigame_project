@@ -34,7 +34,6 @@ void Render::drawMenu(int menuSelection){
 void Render::drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, bool isAttacking, int attackX, int attackY){
     clearScreen();
     drawMap(map);
-    drawAttack(isAttacking, attackX, attackY, player.getLastX());
     for (const auto& slime : slimes) {
         drawEnemy(slime);
     }
@@ -44,6 +43,7 @@ void Render::drawGame(const Map& map, const Player& player, const std::vector<Sl
         }
     }
     drawPlayer(player);
+    drawAttack(isAttacking, attackX, attackY, player.getLastX());
     drawHUD(map, player.hp, player.maxHp);
     fflush(stdout);
 }
