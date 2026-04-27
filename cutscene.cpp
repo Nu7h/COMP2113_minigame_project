@@ -1,3 +1,4 @@
+#include "Cutscene.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -166,7 +167,7 @@ void dialogue(const string& sceneFile, const string& textFile,
 }
 
 
-int main() {
+void intro() {
 
     // opening pan
     panscene("room/1 scene.txt", 20, 0.1);
@@ -210,5 +211,4 @@ int main() {
     // final scene
     playScene("room/6 scene.txt", 3);
 
-    return 0;
 }

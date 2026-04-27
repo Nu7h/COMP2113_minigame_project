@@ -148,6 +148,8 @@ void Game::inputMenu(){
                     roomSaves[numRoomSaves].slimesLeft = slimes.size();
                     numRoomSaves++;
                 }
+                //intro
+                intro();
                 state = GameState::PLAYING;
             } else exit(0);
             break;
