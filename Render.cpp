@@ -255,6 +255,9 @@ void Render::drawTile(int x, int y, char tile){
         printf("\033[1m%c\033[0m", tile); // bold walls
     } else if(tile == '#'){
         printf(COLOR_YELLOW "%c" COLOR_RESET, tile);
+    else if(tile == 's'){
+        printf(" ");
+    }
     } else {
         putchar(tile);
     }
