@@ -1,5 +1,4 @@
 0 0 room02.txt room04.txt
-[Staircase#1]
 +-------+
         |
         |
