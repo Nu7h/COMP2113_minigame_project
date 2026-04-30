@@ -2,13 +2,12 @@
 CPD #1
 ssssssssssssssssssssssssssssssssssss+-------+sssssssssssssss
 ssssssssssssssssssssssssssssssssssss|       |sssssssssssssss
-ssssssssssssssssssssssssssssssssssss|       |sssssssssssssss
 +-----------------------------------+       +--------------+
 |                                                          |
+                                                            
+                                                            
+                                                            
 |                                                          |
-                                                            
-                                                            
-                                                            
 |                                                          |
 |                                                          |
 +----+       +---------------------------------------------+
