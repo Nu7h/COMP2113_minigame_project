@@ -13,6 +13,7 @@
 class Game {
 public:
     Game();
+    ~Game();
     void run();
 
 private:
@@ -58,6 +59,7 @@ private:
 
     // --- gameplay ---
     std::vector<Slime> slimes;
+    Boss* boss = nullptr;  // nullptr when not in boss room
     Player player;  
     Map map;
 
