@@ -109,26 +109,26 @@ void Enemy::updateProjectiles(const Map& map, Player& player){
 
 // ====== BOSS IMPLEMENTATION ======
 
-void Boss::updateBoss(const Player& player, const Map& map) {
+void Boss::updateBoss(const Player& player, Map& map) {
     lastPlayerX = player.getX();
     lastPlayerY = player.getY();
-    
+
     // Handle vulnerable state
     if (vulnerableTimer > 0) {
         vulnerableTimer--;
         return;  // Boss doesn't move or shoot while vulnerable
     }
-    
+
     // Determine shoot cooldown based on mode
     int shootCooldownTicks = isInRageMode() ? RAGE_SHOOT_TICKS : NORMAL_SHOOT_TICKS;
-    
+
     if (shootCooldown > 0) {
         shootCooldown--;
     } else {
         // Time to shoot - fire in 8 directions
         for (int dir = 0; dir < 8; ++dir) {
             int dx = 0, dy = 0;
-            
+
             // 8 directional shooting: N, NE, E, SE, S, SW, W, NW
             if (dir == 0) { dx = 0; dy = -1; }        // N
             else if (dir == 1) { dx = 1; dy = -1; }   // NE
@@ -138,55 +138,74 @@ void Boss::updateBoss(const Player& player, const Map& map) {
             else if (dir == 5) { dx = -1; dy = 1; }   // SW
             else if (dir == 6) { dx = -1; dy = 0; }   // W
             else if (dir == 7) { dx = -1; dy = -1; }  // NW
-            
+
             bossProjectiles.push_back({x, y, dx, dy, 10});
         }
-        
+
         shootCooldown = shootCooldownTicks;
         attackPhase++;
-        
-        // Every 6th attack (every 20 seconds), jump to player's last position
+
+        // Every 6th attack, jump to player's last position
         if (attackPhase % 6 == 0) {
             jumpCooldown = JUMP_TICKS;
         }
     }
-    
-    // Handle jump to player's last position
+
+    // Handle jump — breaks '#' obstacles on the path
     if (jumpCooldown > 0) {
         jumpCooldown--;
-        
-        // Move towards player's last known position gradually
-        int targetX = lastPlayerX;
-        int targetY = lastPlayerY;
-        
-        if (jumpCooldown % 2 == 0) {  // Move every other tick for "slow" movement
+
+        if (jumpCooldown % 2 == 0) {  // Move every other tick
             int dx = 0, dy = 0;
-            
-            if (x < targetX) dx = 1;
-            else if (x > targetX) dx = -1;
-            
-            if (y < targetY) dy = 1;
-            else if (y > targetY) dy = -1;
-            
+
+            if (x < lastPlayerX) dx = 1;
+            else if (x > lastPlayerX) dx = -1;
+
+            if (y < lastPlayerY) dy = 1;
+            else if (y > lastPlayerY) dy = -1;
+
             int nx = x + dx;
             int ny = y + dy;
-            
+
             if (map.isWalkable(nx, ny)) {
+                x = nx;
+                y = ny;
+            } else if (map.getTile(nx, ny) == '#') {
+                map.setTile(nx, ny, ' ');
                 x = nx;
                 y = ny;
             }
         }
-        
+
         // After jump completes, check for rage mode jump counter
         if (jumpCooldown == 0 && isInRageMode()) {
             rageJumpCount++;
-            
+
             // Every 2 jumps in rage mode, enter vulnerable state
             if (rageJumpCount % 2 == 0) {
                 vulnerableTimer = VULNERABLE_DURATION;
                 rageJumpCount = 0;
             }
         }
+    } else {
+        /*
+        if (approachCooldown > 0) {
+            approachCooldown--;
+        } else {
+            approachCooldown = APPROACH_TICKS;
+            int adx = lastPlayerX - x;
+            int ady = lastPlayerY - y;
+            int dx = 0, dy = 0;
+            if (std::abs(adx) > std::abs(ady)) dx = (adx > 0) ? 1 : -1;
+            else if (ady != 0)                  dy = (ady > 0) ? 1 : -1;
+
+            int nx = x + dx;
+            int ny = y + dy;
+            if (map.isWalkable(nx, ny)) {
+                x = nx;
+                y = ny;
+            }
+        }*/
     }
 }
 

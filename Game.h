@@ -68,6 +68,7 @@ private:
     int attackCD = 0;
     int attackX = 0;
     int attackY = 0;
+    int dmgTimer = 0;
 
     // --- render ---
     Render renderer;

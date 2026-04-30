@@ -418,7 +418,10 @@ void Game::updatePlaying(){
         
         // Handle player attack on boss - check hitbox for all body parts
         if (isAttacking && boss->isHitByAttack(attackX, attackY)) {
-            boss->hp -= 50;
+            if(dmgTimer == 0){
+                boss->hp -= 50;
+                dmgTimer = 5;
+            }
             if (boss->hp <= 0) {
                 delete boss;
                 boss = nullptr;
@@ -435,7 +438,7 @@ void Game::updatePlaying(){
         if (isAttacking) {
             for (auto e = slimes.begin(); e != slimes.end(); ) {
                 if (e->x == attackX && e->y == attackY) {
-                    e->hp -= 10; // 5 hits to kill (100/20)
+                    e->hp -= 10; 
                     if (e->hp <= 0) {
                         e = slimes.erase(e);
                         int rNum = 0;
@@ -453,7 +456,9 @@ void Game::updatePlaying(){
             }
         }
     }
-
+    if(dmgTimer > 0){
+        dmgTimer--;
+    }
     if (player.hp <= 0){
         state = GameState::GAME_OVER;
     }

@@ -60,7 +60,7 @@ class Boss : public Enemy{
         std::vector<bossProjectile> bossProjectiles;
         
         // Boss behavior methods
-        void updateBoss(const Player& player, const Map& map);
+        void updateBoss(const Player& player, Map& map);
         void updateBossProjectiles(const Map& map, Player& player);
         
         // Getters
@@ -71,21 +71,18 @@ class Boss : public Enemy{
         int getRageJumpCount() const { return rageJumpCount; }
         
         // Hitbox check - returns true if (attackX, attackY) hits a valid body part
+        // Visual layout (origin at boss.x, boss.y):
+        //   col:  x    x+1  x+2  x+3  x+4
+        //   y  :            0
+        //   y+1:  /         |         backslash
+        //   y+2:       /         backslash
         bool isHitByAttack(int attackX, int attackY) const {
-            // Head (0)
-            if (attackX == x && attackY == y) return true;
-            
-            // Body (|)
-            if (attackX == x && attackY == y + 1) return true;
-            
-            // Arms (/ \)
-            if (attackX == x - 1 && attackY == y + 1) return true;  // Left arm
-            if (attackX == x + 1 && attackY == y + 1) return true;  // Right arm
-            
-            // Legs (/ \)
-            if (attackX == x - 1 && attackY == y + 2) return true;  // Left leg
-            if (attackX == x + 1 && attackY == y + 2) return true;  // Right leg
-            
+            if (attackX == x + 2 && attackY == y)     return true;  // Head
+            if (attackX == x     && attackY == y + 1) return true;  // Left arm
+            if (attackX == x + 2 && attackY == y + 1) return true;  // Torso
+            if (attackX == x + 4 && attackY == y + 1) return true;  // Right arm
+            if (attackX == x + 1 && attackY == y + 2) return true;  // Left leg
+            if (attackX == x + 3 && attackY == y + 2) return true;  // Right leg
             return false;
         }
         
@@ -107,5 +104,8 @@ class Boss : public Enemy{
         static constexpr int RAGE_SHOOT_TICKS = 70;     // 3.5 seconds
         static constexpr int JUMP_TICKS = 40;           // ~2 seconds for jump
         static constexpr int VULNERABLE_DURATION = 60;  // 3 seconds
+        static constexpr int APPROACH_TICKS = 8;        // ~0.4 seconds between steps
+
+        int approachCooldown = 0;
 };
 #endif

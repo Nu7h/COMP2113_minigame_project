@@ -34,7 +34,7 @@ void Render::drawMenu(int menuSelection){
 void Render::drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY){
     clearScreen();
     drawMap(map);
-    drawAttack(isAttacking, attackX, attackY, player.getLastX());
+    
     for (const auto& slime : slimes) {
         drawEnemy(slime);
     }
@@ -49,6 +49,7 @@ void Render::drawGame(const Map& map, const Player& player, const std::vector<Sl
             drawBossProjectile(proj);
         }
     }
+    drawAttack(isAttacking, attackX, attackY, player.getLastX());
     drawPlayer(player);
     drawHUD(map, player.hp, player.maxHp, boss);
     fflush(stdout);
@@ -153,7 +154,7 @@ void Render::drawBoss(const class Boss& boss){
         color = "\033[35m";  // Rage mode - magenta/purple
     }
     
-    // Draw 3x3 boss
+    // Draw 3x3 bos
     // Top row: 0
     int x = boss.x;
     int y = boss.y;
@@ -174,7 +175,7 @@ void Render::drawBoss(const class Boss& boss){
 void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss){
     moveTo(0, map.getHeight() + 1);
     
-    // Display boss HP if in boss room, otherwise display player HP
+
     if (boss != nullptr) {
         int bosshpClamped = std::max(0, std::min(boss->hp, boss->maxHp));
         int bossHealthPercent = (bosshpClamped * 100) / boss->maxHp;
@@ -184,16 +185,14 @@ void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss){
         if(bossHealthPercent <= 25) bossHpColor = COLOR_BRED;
         
         printf("%sBOSS HP: %s[%d/%d] (%d%%)%s  "
-               COLOR_CYAN "[P]" COLOR_RESET "Pause "
-               COLOR_CYAN "[Q]" COLOR_RESET "Quit "
-               COLOR_CYAN "[SPC]" COLOR_RESET "Atk "
-               COLOR_CYAN "[C]" COLOR_RESET "Def",
+            ,
             bossHpColor,
             bossHpColor,
             boss->hp, boss->maxHp,
             bossHealthPercent,
             COLOR_RESET);
-    } else {
+        printf("\n");
+    }
         // Regular player HP display
         int hpClamped = std::max(0, std::min(hp, maxHp));
         int hearts = (hpClamped * 3) / maxHp;
@@ -203,7 +202,7 @@ void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss){
         if(hearts <= 0) hpColor = COLOR_BRED;
 
         printf("%sHP: %s%s%s  [%d/%d]%s  "
-               COLOR_CYAN "[P]" COLOR_RESET "Pause "
+                COLOR_CYAN "[P]" COLOR_RESET "Pause "
                COLOR_CYAN "[Q]" COLOR_RESET "Quit "
                COLOR_CYAN "[SPC]" COLOR_RESET "Atk "
                COLOR_CYAN "[C]" COLOR_RESET "Def",
@@ -213,7 +212,6 @@ void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss){
             hearts >= 2 ? "<3" : "  ",
             hp, maxHp,
             COLOR_RESET);
-    }
 }
 
 void Render::drawAttack(bool isAttacking, int attackX, int attackY, int lastX){

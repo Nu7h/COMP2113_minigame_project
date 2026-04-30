@@ -46,6 +46,11 @@ char Map::getTile(int x, int y) const {
     return grid[y][x];
 }
 
+void Map::setTile(int x, int y, char c) {
+    if (y >= 0 && y < (int)grid.size() && x >= 0 && x < (int)grid[y].size())
+        grid[y][x] = c;
+}
+
 bool Map::isWalkable(int x, int y) const {
     if (y < 0 || y >= (int)grid.size() || x < 0 || x >= (int)grid[0].size())
         return false;
