@@ -1,8 +1,8 @@
 0 room03.txt room05.txt 0
 [Staircase#2]
 +-------+
-|
-|
+|        
+|        
 |       |
 |       |
 |       |
