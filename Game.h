@@ -23,21 +23,24 @@ private:
     void render();
 
     // --- per-state input ---
-    void inputMenu();
+    void inputStartMenu();
+    void inputDifficultyMenu();
     void inputPlaying();
     void inputPaused();
     void inputGameOver();
     void inputWin();
 
     // --- per-state update ---
-    void updateMenu();
+    void updateStartMenu();
+    void updateDifficultyMenu();
     void updatePlaying();
     void updatePaused();
     void updateGameOver();
     void updateWin();
 
     // --- per-state render ---
-    void renderMenu();
+    void renderStartMenu();
+    void renderDifficultyMenu();
     void renderPlaying();
     void renderPaused();
     void renderGameOver();
@@ -45,17 +48,17 @@ private:
 
     // --- save game ---
     void inputSaving();
-    void inputContinue();
     void updateSaving();
-    void updateContinue();
     void renderSaving();
-    void renderContinue();
 
+    void startNewGame(Difficulty selectedDifficulty);
+    void resetGameSession();
+    bool hasSaveFile() const;
     void saveGame();
     bool loadGame();
 
     // --- state ---
-    GameState state = GameState::MENU;
+    GameState state = GameState::START_MENU;
 
     // --- gameplay ---
     std::vector<Slime> slimes;
@@ -74,8 +77,10 @@ private:
     Render renderer;
 
     // --- menu ---
-    static constexpr int menuOptionCount = 4;
-    int menuSelection = 0;
+    static constexpr int startMenuOptionCount = 3; // New/ Continue/ Quit
+    static constexpr int difficultyMenuOptionCount = 4; // Easy/ Normal/ Hard / Back
+    int startMenuSelection = 0;
+    int difficultyMenuSelection = 1; // Default to Normal
     Difficulty difficulty = Difficulty::NORMAL;
 
     // --- room ---

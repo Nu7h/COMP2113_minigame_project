@@ -2,9 +2,13 @@
 #define GAMESTATE_H
 
 enum class GameState {
-    MENU, PLAYING, PAUSED, GAME_OVER, WIN,
+    START_MENU,
+    DIFFICULTY_MENU,
+    PLAYING,
+    PAUSED,
+    GAME_OVER,
+    WIN,
     SAVING,
-    CONTINUE   
 };
 
 #endif
