@@ -51,7 +51,7 @@ bool Map::isWalkable(int x, int y) const {
         return false;
 
     char tile = grid[y][x];
-    return tile != '+' && tile != '-' && tile != '|' && tile != '#'; && tile != 's';
+    return tile != '+' && tile != '-' && tile != '|' && tile != '#' && tile != 's';
 }
 
 int Map::getHeight() const{
@@ -60,4 +60,8 @@ int Map::getHeight() const{
 
 int Map::getWidth() const{
     return grid[0].size();
+}
+
+std::string Map::getRoomName() const {
+    return roomname;
 }

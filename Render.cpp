@@ -82,18 +82,18 @@ void Render::drawGame(const Map& map, const Player& player, const std::vector<Sl
         }
     }
     drawAttack(isAttacking, attackX, attackY, player.getLastX());
-    drawPlayer(player);
+    drawPlayer(player, map);
     drawHUD(map, player.hp, player.maxHp, boss);
     fflush(stdout);
 }
 
 void Render::drawProjectile(const slimeProjectile& projectile){
-    moveTo(projectile.x, projectile.y);
+    moveTo(projectile.x, projectile.y+1);
     printf(COLOR_BRED COLOR_BOLD "o" COLOR_RESET);
 }
 
 void Render::drawBossProjectile(const struct bossProjectile& projectile){
-    moveTo(projectile.x, projectile.y);
+    moveTo(projectile.x, projectile.y+1);
     printf(COLOR_BRED COLOR_BOLD "*" COLOR_RESET);
 }
 
@@ -131,17 +131,25 @@ void Render::drawSavePrompt(){
 // ===============
 
 void Render::drawMap(const Map& map){
+    std::string name = map.getRoomName();
+    int mapWidth = map.getWidth();
+
+    int centerX = (mapWidth - name.length() - 4) / 2;
+    if (centerX < 0) centerX = 0;
+
+    moveTo(centerX, 0);
+    printf("[ %s ]", name.c_str());
     for(int y = 0; y < map.getHeight(); y++){
         for(int x = 0; x < map.getWidth(); x++){
-            drawTile(x, y, map.getTile(x, y));
+            drawTile(x, y+1, map.getTile(x, y));
         }      
     }      
 }
 
-void Render::drawPlayer(const Player& player){
+void Render::drawPlayer(const Player& player, const Map& map){
     if(player.isBlinking) return;
 
-    moveTo(player.x, player.y);
+    moveTo(player.x, player.y+1);
     int lx = player.getLastX();
     int ly = player.getLastY();
 
@@ -154,8 +162,10 @@ void Render::drawPlayer(const Player& player){
     printf(COLOR_BGREEN COLOR_BOLD "%c" COLOR_RESET, symbol);
 
     if(player.isShielding){
+
         int sx = player.x + player.getLastX();
-        int sy = player.y + player.getLastY();
+        int sy = player.y+1 + player.getLastY();
+        if(map.isWalkable(sx, sy-1)){
         moveTo(sx, sy);
         if(ly != 0){
         printf(COLOR_CYAN COLOR_BOLD "─" COLOR_RESET); // top/bottom shield
@@ -163,10 +173,11 @@ void Render::drawPlayer(const Player& player){
             printf(COLOR_CYAN COLOR_BOLD "|" COLOR_RESET); // left/right shield
         }
     }
+    }
 }
 
 void Render::drawEnemy(const Enemy& slime){
-    moveTo(slime.x, slime.y);
+    moveTo(slime.x, slime.y+1);
     printf(COLOR_RED COLOR_BOLD "E" COLOR_RESET);
 }
 
@@ -182,7 +193,7 @@ void Render::drawBoss(const class Boss& boss){
     // Draw 3x3 bos
     // Top row: 0
     int x = boss.x;
-    int y = boss.y;
+    int y = boss.y+1;
     
     moveTo(x, y);
     printf("  ");
@@ -198,7 +209,7 @@ void Render::drawBoss(const class Boss& boss){
 }
 
 void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss){
-    moveTo(0, map.getHeight() + 1);
+    moveTo(0, map.getHeight() + 2);
     
 
     if (boss != nullptr) {
@@ -241,7 +252,7 @@ void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss){
 
 void Render::drawAttack(bool isAttacking, int attackX, int attackY, int lastX){
     if(isAttacking){
-        moveTo(attackX, attackY);
+        moveTo(attackX, attackY+1);
         if(lastX != 0)  printf(COLOR_BYELLOW COLOR_BOLD "─" COLOR_RESET); // right
         else  printf(COLOR_BYELLOW COLOR_BOLD "|" COLOR_RESET); // fallback
     }
@@ -253,9 +264,8 @@ void Render::drawTile(int x, int y, char tile){
         printf("\033[1m%c\033[0m", tile); // bold walls
     } else if(tile == '#'){
         printf(COLOR_YELLOW "%c" COLOR_RESET, tile);
-    else if(tile == 's'){
+    } else if(tile == 's'){
         printf(" ");
-    }
     } else {
         putchar(tile);
     }

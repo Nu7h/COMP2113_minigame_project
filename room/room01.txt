@@ -1,4 +1,4 @@
-0 room02.txt room00.txt 0
+0 room02.txt room0.txt 0
 Haking wong building
 +-------------------------------------------------------------+
 |            |            #sssssssssssssssssssssssssssssssssss|

@@ -15,7 +15,8 @@ public:
 
     const RoomLinks& getLinks(){ return links; }
     std::string getNeighbor(char dir) const; // 'N', 'E', 'S', 'W'
-
+    std::string getRoomName() const;
+    
     int getWidth() const;
     int getHeight() const;
     bool isWalkable(int x, int y) const;

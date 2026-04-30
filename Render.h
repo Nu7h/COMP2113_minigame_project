@@ -18,7 +18,7 @@ public:
 
 private:
     void drawMap(const Map& map);
-    void drawPlayer(const Player& player);
+    void drawPlayer(const Player& player, const Map& map);
     void drawEnemy(const Enemy& enemy);
     void drawBoss(const class Boss& boss);
     void drawProjectile(const slimeProjectile& projectile);
