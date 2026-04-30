@@ -43,6 +43,12 @@ void Render::drawGame(const Map& map, const Player& player, const std::vector<Sl
             drawProjectile(projectile);
         }
     }
+    if (boss != nullptr) {
+        drawBoss(*boss);
+        for (const auto& proj : boss->bossProjectiles) {
+            drawBossProjectile(proj);
+        }
+    }
     drawPlayer(player);
     drawHUD(map, player.hp, player.maxHp, boss);
     fflush(stdout);
