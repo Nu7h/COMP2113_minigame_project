@@ -15,6 +15,8 @@ bool Map::loadFromFile(const std::string& path) {
     std::stringstream ss(line);
     if (!(ss >> links.north >> links.east >> links.south >> links.west)) return false;
 
+    if (!std::getline(in, roomname)) return false;
+
     grid.clear();
     while(std::getline(in, line)){
         if(line.empty()) continue;
@@ -49,7 +51,7 @@ bool Map::isWalkable(int x, int y) const {
         return false;
 
     char tile = grid[y][x];
-    return tile != '+' && tile != '-' && tile != '|' && tile != '#';
+    return tile != '+' && tile != '-' && tile != '|' && tile != '#'; && tile != 's';
 }
 
 int Map::getHeight() const{

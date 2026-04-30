@@ -25,6 +25,7 @@ public:
 private:
     std::vector<std::string> grid;
     RoomLinks links{"0", "0", "0", "0"};
+    std::string roomname;
 };
 
 #endif
