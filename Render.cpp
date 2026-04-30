@@ -44,7 +44,7 @@ void Render::drawGame(const Map& map, const Player& player, const std::vector<Sl
         }
     }
     drawPlayer(player);
-    drawHUD(map, player.hp, player.maxHp);
+    drawHUD(map, player.hp, player.maxHp, boss);
     fflush(stdout);
 }
 
