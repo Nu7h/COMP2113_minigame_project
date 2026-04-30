@@ -1,7 +1,8 @@
 0 0 room08.txt room06.txt
-           +--------------------+
-           |                    |
-           |                    |
+CPD #2
+sssssssssss+--------------------+sssssssssssssssssssssssssss
+sssssssssss|                    |sssssssssssssssssssssssssss
+sssssssssss|                    |sssssssssssssssssssssssssss
 +----------+                    +--------------------------+
 |                                                          |
 |                                                          |
@@ -11,5 +12,5 @@
 |                                                          |
 |                                                          |
 +----------+                              +----------------+
-           |                              |
-           |                              |
+sssssssssss|                              |sssssssssssssssss
+sssssssssss|                              |sssssssssssssssss

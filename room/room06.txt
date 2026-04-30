@@ -1,7 +1,8 @@
 0 room07.txt room10.txt room05.txt
-                                    +-------+
-                                    |       |
-                                    |       |
+CPD #1
+ssssssssssssssssssssssssssssssssssss+-------+sssssssssssssss
+ssssssssssssssssssssssssssssssssssss|       |sssssssssssssss
+ssssssssssssssssssssssssssssssssssss|       |sssssssssssssss
 +-----------------------------------+       +--------------+
 |                                                          |
 |                                                          |
@@ -11,5 +12,5 @@
 |                                                          |
 |                                                          |
 +----+       +---------------------------------------------+
-     |       |
-     |       |
+sssss|       |ssssssssssssssssssssssssssssssssssssssssssssss
+sssss|       |ssssssssssssssssssssssssssssssssssssssssssssss

@@ -1,6 +1,7 @@
 room07.txt 0 room09.txt room11.txt
-    |                              |
-    |                              |
+CPD #3
+ssss|                              |
+ssss|                              |
 +---+                              |
 |                                  |
 |                                  |
@@ -13,5 +14,5 @@ room07.txt 0 room09.txt room11.txt
 |                                  |
 |                                  |
 +---+                              |
-    |                              |
-    |                              |
+ssss|                              |
+ssss|                              |
