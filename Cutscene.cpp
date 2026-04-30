@@ -12,11 +12,7 @@ using namespace std;
 // ./cutscene
 
 void clearScreen() {
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
+    cout << "\033[2J\033[H" << flush;
 }
 
 void waitSeconds(double seconds) {
@@ -91,7 +87,7 @@ void playScene(const string& filename, double wait) {
         processChar(c, file, false, 0);
     }
 
-    cout << "\033[0m"; // reset
+    cout << "\033[0m" << flush; // reset
     waitSeconds(wait);
 }
 
@@ -107,7 +103,7 @@ void typeScene(const string& filename, double delaySeconds) {
         processChar(c, file, true, delaySeconds);
     }
 
-    cout << "\033[0m";
+    cout << "\033[0m" << flush;
 }
 
 void typeLine(const string& filename, int targetLine, double delaySeconds) {
@@ -173,8 +169,6 @@ void intro() {
     panscene("room/1 scene.txt", 20, 0.1);
 
     // show scene
-    playScene("room/1 scene.txt", 2);
-    playScene("room/2 scene.txt", 2);
     playScene("room/1 scene.txt", 2);
 
     // elevator + blink
