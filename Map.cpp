@@ -15,6 +15,8 @@ bool Map::loadFromFile(const std::string& path) {
     std::stringstream ss(line);
     if (!(ss >> links.north >> links.east >> links.south >> links.west)) return false;
 
+    if (!std::getline(in, roomname)) return false;
+
     grid.clear();
     while(std::getline(in, line)){
         if(line.empty()) continue;
@@ -22,13 +24,6 @@ bool Map::loadFromFile(const std::string& path) {
     }
 
     if(grid.empty()) return false;
-    int w = grid[0].size();
-
-    for (const auto& row : grid){ 
-        if (row.size() != w) 
-        return false; 
-    }
-
     return true;
 }
 
@@ -44,6 +39,11 @@ std::string Map::getNeighbor(char dir) const {
 
 char Map::getTile(int x, int y) const {
     return grid[y][x];
+}
+
+void Map::setTile(int x, int y, char c) {
+    if (y >= 0 && y < (int)grid.size() && x >= 0 && x < (int)grid[y].size())
+        grid[y][x] = c;
 }
 
 bool Map::isWalkable(int x, int y) const {

@@ -20,10 +20,12 @@ public:
     int getHeight() const;
     bool isWalkable(int x, int y) const;
     char getTile(int x, int y) const;
+    void setTile(int x, int y, char c);
 
 private:
     std::vector<std::string> grid;
     RoomLinks links{"0", "0", "0", "0"};
+    std::string roomname;
 };
 
 #endif
