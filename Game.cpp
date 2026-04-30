@@ -280,13 +280,13 @@ void Game::handleRoomTransition(){
     int h = map.getHeight();
 
     if(y == 0){
-        if(x <= (w/2) + 1 && x >= (w/2) - 2 && (transition || autotrans)) tryTransition('N');
+        if(transition || autotrans) tryTransition('N');
     } else if(x == w - 1){
-        if(y <= (h/2) && y >= (h/2) - 1 && (transition || autotrans)) tryTransition('E');
+        if(transition || autotrans) tryTransition('E');
     } else if(y == h - 1){
-        if(x <= (w/2) + 1 && x >= (w/2) - 2 && (transition || autotrans)) tryTransition('S');
+        if(transition || autotrans) tryTransition('S');
     } else if(x == 0){
-        if(y <= (h/2) && y >= (h/2) - 1 && (transition || autotrans)) tryTransition('W');
+        if(transition || autotrans) tryTransition('W');
     }
 
     transition = false;
