@@ -113,44 +113,134 @@ static int readKey() {
     return (int)c;
 }
 
+bool Game::hasSaveFile() const {
+    std::ifstream f("save.dat");
+    return f.good();
+}
+
+void Game::resetGameSession() {
+    player = Player();
+    currentRoom = "room/room0.txt";
+    map.loadFromFile(currentRoom);
+
+    slimes.clear();
+
+    if (boss != nullptr) {
+        delete boss;
+        boss = nullptr;
+    }
+
+    isAttacking = false;
+    attackTimer = 0;
+    attackCD = 0;
+    attackX = 0;
+    attackY = 0;
+
+    transition = false;
+    numRoomSaves = 0;
+}
+
+void Game::startNewGame(Difficulty selectedDifficulty) {
+    resetGameSession();
+    difficulty = selectedDifficulty;
+
+    spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
+
+    int rNum = 0;
+    if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
+        roomSaves[0].roomNumber = rNum;
+        roomSaves[0].slimesLeft = static_cast<int>(slimes.size());
+        numRoomSaves = 1;
+    }
+
+    state = GameState::PLAYING;
+}
+
 void Game::input(){
     switch(state){
-        case GameState::MENU:     inputMenu();    break;
+        case GameState::START_MENU:     inputStartMenu();    break;
+        case GameState::STORY_OVERVIEW: inputStoryOverview(); break;
+        case GameState::DIFFICULTY_MENU: inputDifficultyMenu(); break;
         case GameState::PLAYING:  inputPlaying(); break;
         case GameState::PAUSED:   inputPaused();  break;
         case GameState::GAME_OVER:inputGameOver();break;
         case GameState::WIN:      inputWin();     break;
         case GameState::SAVING:    inputSaving();   break;
-        case GameState::CONTINUE:  inputContinue(); break;
     }
 }
 
-void Game::inputMenu(){
+void Game::inputStartMenu() {
     int ch = readKey();
-    switch(ch){
-        case 'w': case 'W':
-        case KEY_UP:
-            menuSelection = (menuSelection - 1 + menuOptionCount) % menuOptionCount;
-            break;
-        case 's': case 'S':
-        case KEY_DOWN:
-            menuSelection = (menuSelection + 1) % menuOptionCount;
-            break;
-        case '\n':
-        case ' ':
-            if(menuSelection < 3){
-                difficulty = static_cast<Difficulty>(menuSelection);
-                spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
-                numRoomSaves = 0;
-                int rNum = 0;
-                if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
-                    roomSaves[numRoomSaves].roomNumber = rNum;
-                    roomSaves[numRoomSaves].slimesLeft = slimes.size();
-                    numRoomSaves++;
+
+    switch (ch) {
+    case 'w': case 'W':
+    case KEY_UP:
+        startMenuSelection =
+            (startMenuSelection - 1 + startMenuOptionCount) % startMenuOptionCount;
+        break;
+
+    case 's': case 'S':
+    case KEY_DOWN:
+        startMenuSelection =
+            (startMenuSelection + 1) % startMenuOptionCount;
+        break;
+
+    case '\n':
+    case ' ':
+        if (startMenuSelection == 0) {
+            state = GameState::STORY_OVERVIEW;
+        } else if (startMenuSelection == 1) {
+            if (hasSaveFile()) {
+                if (loadGame()) {
+                    state = GameState::PLAYING;
                 }
-                state = GameState::PLAYING;
-            } else exit(0);
-            break;
+            }
+        } else if (startMenuSelection == 2) {
+            exit(0);
+        }
+        break;
+    }
+}
+
+void Game::inputStoryOverview() {
+    int ch = readKey();
+
+    if (ch == '\n' || ch == ' ') {
+        difficultyMenuSelection = 1; // Medium default
+        state = GameState::DIFFICULTY_MENU;
+    } else if (ch == 'b' || ch == 'B') {
+        state = GameState::START_MENU;
+    }
+}
+
+void Game::inputDifficultyMenu() {
+    int ch = readKey();
+
+    switch (ch) {
+    case 'w': case 'W':
+    case KEY_UP:
+        difficultyMenuSelection =
+            (difficultyMenuSelection - 1 + difficultyMenuOptionCount) % difficultyMenuOptionCount;
+        break;
+
+    case 's': case 'S':
+    case KEY_DOWN:
+        difficultyMenuSelection =
+            (difficultyMenuSelection + 1) % difficultyMenuOptionCount;
+        break;
+
+    case '\n':
+    case ' ':
+        if (difficultyMenuSelection == 0) {
+            startNewGame(Difficulty::EASY);
+        } else if (difficultyMenuSelection == 1) {
+            startNewGame(Difficulty::NORMAL);
+        } else if (difficultyMenuSelection == 2) {
+            startNewGame(Difficulty::HARD);
+        } else if (difficultyMenuSelection == 3) {
+            state = GameState::START_MENU;
+        }
+        break;
     }
 }
 
@@ -295,8 +385,8 @@ void Game::inputGameOver(){
         isAttacking   = false;
         attackTimer   = 0;
         attackCD = 0;
-        menuSelection  = 0;
-        state = GameState::MENU;
+        startMenuSelection  = 0;
+        state = GameState::START_MENU;
     }
 }
 
@@ -312,8 +402,8 @@ void Game::inputWin(){
             boss = nullptr;
         }
         numRoomSaves = 0;
-        menuSelection = 0;
-        state = GameState::MENU;
+        startMenuSelection = 0;
+        state = GameState::START_MENU;
     }
 }
 
@@ -323,15 +413,17 @@ void Game::inputWin(){
 
 void Game::update(){
     switch(state){
-        case GameState::MENU:     updateMenu();     break;
+        case GameState::START_MENU:     updateStartMenu();     break;
+        case GameState::STORY_OVERVIEW: updateStoryOverview(); break;
+        case GameState::DIFFICULTY_MENU: updateDifficultyMenu(); break;
         case GameState::PLAYING:  updatePlaying();  break;
         case GameState::PAUSED:   updatePaused();   break;
         case GameState::GAME_OVER:updateGameOver(); break;
         case GameState::WIN:      updateWin();      break;
         case GameState::SAVING:    break;
-        case GameState::CONTINUE:  break;
     }
 }
+
 bool Game::loadGame() {
     std::ifstream f("save.dat");
     if (!f) return false;
@@ -379,22 +471,16 @@ void Game::saveGame() {
         f << roomSaves[i].roomNumber << " " << roomSaves[i].slimesLeft << "\n";
     }
 }
-void Game::updateMenu()    { /* nothing to tick */ }
+void Game::updateStartMenu()    {}
+void Game::updateStoryOverview() {}
+void Game::updateDifficultyMenu() {}
 void Game::updatePaused()  { /* freeze evrytng  */ }
 void Game::inputSaving() {
     int ch = readKey();
     if (ch == 'y' || ch == 'Y') { saveGame(); exit(0); }
     if (ch == 'n' || ch == 'N') { exit(0); }
 }
-void Game::inputContinue() {
-    int ch = readKey();
-    if (ch == 'y' || ch == 'Y') {
-        if (loadGame()) state = GameState::PLAYING;
-    } else if (ch == 'n' || ch == 'N') {
-        std::remove("save.dat");
-        state = GameState::MENU;
-    }
-}
+
 void Game::updateGameOver(){ /* nothing to tick */ }
 void Game::updateWin()     { /* nothing to tick */ }
 void Game::updatePlaying(){
@@ -459,24 +545,34 @@ void Game::updatePlaying(){
     }
 }   
 
+
 // ===============
 //     RENDER
 // ===============
 
 void Game::render(){
     switch(state){
-        case GameState::MENU:     renderMenu();     break;
+        case GameState::START_MENU:     renderStartMenu();     break;
+        case GameState::STORY_OVERVIEW: renderStoryOverview(); break;
+        case GameState::DIFFICULTY_MENU: renderDifficultyMenu(); break;
         case GameState::PLAYING:  renderPlaying();  break;
         case GameState::PAUSED:   renderPaused();   break;
         case GameState::GAME_OVER:renderGameOver(); break;
         case GameState::WIN:      renderWin();      break;
         case GameState::SAVING:    renderSaving();   break;
-        case GameState::CONTINUE:  renderContinue(); break;
     }  
 }
 
-void Game::renderMenu(){
-    renderer.drawMenu(menuSelection);
+void Game::renderStartMenu() {
+    renderer.drawStartMenu(startMenuSelection, hasSaveFile());
+}
+
+void Game::renderStoryOverview() {
+    renderer.drawStoryOverview();
+}
+
+void Game::renderDifficultyMenu() {
+    renderer.drawDifficultyMenu(difficultyMenuSelection);
 }
 
 void Game::renderPlaying(){
@@ -499,15 +595,9 @@ void Game::renderSaving(){
     renderer.drawSavePrompt();
 }
 
-void Game::renderContinue(){
-    renderer.drawContinuePrompt();
-}
-
 Game::Game() {
     if (!map.loadFromFile(currentRoom)) exit(1);
-    std::ifstream f("save.dat");
-    if (f.good()) state = GameState::CONTINUE; // show continue prompt first
-    else state = GameState::MENU;
+    state = GameState::START_MENU;
 }
 
 Game::~Game() {

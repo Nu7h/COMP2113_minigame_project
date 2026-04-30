@@ -8,13 +8,14 @@
 #include <algorithm>
 class Render {
 public:
-    void drawMenu(int menuSelection);
+    void drawStartMenu(int menuSelection, bool hasSaveFile);
+    void drawStoryOverview();
+    void drawDifficultyMenu(int menuSelection);
     void drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY);
     void drawPauseOverlay();
     void drawGameOver();
     void drawWin();
     void drawSavePrompt();
-    void drawContinuePrompt();
 
 private:
     void drawMap(const Map& map);

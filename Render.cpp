@@ -19,15 +19,66 @@ static void clearScreen() {
     printf("\033[2J\033[H");
 }
 
-void Render::drawMenu(int menuSelection){
+void Render::drawStartMenu(int menuSelection, bool hasSaveFile) {
     clearScreen();
-    moveTo(4, 3); printf(COLOR_BYELLOW COLOR_BOLD "  THE LEGEND OF HKU" COLOR_RESET);
-    moveTo(4, 5); printf(COLOR_BWHITE "  Select difficulty" COLOR_RESET);
-    moveTo(4, 7); printf("%s " COLOR_BGREEN "EASY" COLOR_RESET,     menuSelection == 0 ? ">" : " ");
-    moveTo(4, 8); printf("%s " COLOR_BYELLOW "NORMAL" COLOR_RESET,  menuSelection == 1 ? ">" : " ");
-    moveTo(4, 9); printf("%s " COLOR_BRED "HARD" COLOR_RESET,       menuSelection == 2 ? ">" : " ");
-    moveTo(4, 10); printf("%s Quit",                                 menuSelection == 3 ? ">" : " ");
-    moveTo(4, 12); printf(COLOR_CYAN "W/S" COLOR_RESET " to move, " COLOR_CYAN "Enter" COLOR_RESET " to select \n\n");
+
+    moveTo(4, 2);  printf(COLOR_BYELLOW COLOR_BOLD " THE LEGEND OF HKU" COLOR_RESET);
+    moveTo(4, 4);  printf(COLOR_BWHITE " Main Menu" COLOR_RESET);
+
+    moveTo(4, 6);  printf("%s " COLOR_BGREEN "New" COLOR_RESET,
+                          menuSelection == 0 ? ">" : " ");
+
+    if (hasSaveFile) {
+        moveTo(4, 7);  printf("%s " COLOR_BYELLOW "Continue" COLOR_RESET,
+                              menuSelection == 1 ? ">" : " ");
+    } else {
+        moveTo(4, 7);  printf("%s Continue " COLOR_RESET COLOR_RED "(no save found)" COLOR_RESET,
+                              menuSelection == 1 ? ">" : " ");
+    }
+
+    moveTo(4, 8);  printf("%s Quit", menuSelection == 2 ? ">" : " ");
+
+    moveTo(4, 10); printf(COLOR_CYAN "W/S" COLOR_RESET " to move, "
+                          COLOR_CYAN "Enter" COLOR_RESET " to select");
+    fflush(stdout);
+}
+
+void Render::drawStoryOverview() {
+    clearScreen();
+
+    moveTo(4, 2);  printf(COLOR_BYELLOW COLOR_BOLD " THE LEGEND OF HKU" COLOR_RESET);
+    moveTo(4, 4);  printf(COLOR_BWHITE " Background" COLOR_RESET);
+
+    moveTo(4, 6);  printf("A dark force has spread across the halls and passages");
+    moveTo(4, 7);  printf("of HKU, turning once-familiar spaces into dangerous");
+    moveTo(4, 8);  printf("rooms filled with hostile slimes and hidden threats.");
+
+    moveTo(4, 10); printf("As the hero, you must fight through each area,");
+    moveTo(4, 11); printf("survive enemy attacks, and defeat the final boss");
+    moveTo(4, 12); printf("to restore peace to the campus.");
+
+    moveTo(4, 14); printf(COLOR_CYAN "Enter/Space" COLOR_RESET " Continue");
+    moveTo(4, 15); printf(COLOR_CYAN "B" COLOR_RESET " Back");
+    fflush(stdout);
+}
+
+void Render::drawDifficultyMenu(int menuSelection) {
+    clearScreen();
+
+    moveTo(4, 2);  printf(COLOR_BYELLOW COLOR_BOLD " THE LEGEND OF HKU" COLOR_RESET);
+    moveTo(4, 4);  printf(COLOR_BWHITE " Difficulty" COLOR_RESET);
+
+    moveTo(4, 6);  printf("%s " COLOR_BGREEN "Easy" COLOR_RESET,
+                          menuSelection == 0 ? ">" : " ");
+    moveTo(4, 7);  printf("%s " COLOR_BYELLOW "Medium" COLOR_RESET,
+                          menuSelection == 1 ? ">" : " ");
+    moveTo(4, 8);  printf("%s " COLOR_BRED "Hard" COLOR_RESET,
+                          menuSelection == 2 ? ">" : " ");
+    moveTo(4, 9);  printf("%s Back",
+                          menuSelection == 3 ? ">" : " ");
+
+    moveTo(4, 11); printf(COLOR_CYAN "W/S" COLOR_RESET " to move, "
+                          COLOR_CYAN "Enter" COLOR_RESET " to select");
     fflush(stdout);
 }
 
@@ -92,13 +143,6 @@ void Render::drawSavePrompt(){
     fflush(stdout);
 }
 
-void Render::drawContinuePrompt(){
-    clearScreen();
-    moveTo(4, 3); printf(COLOR_BYELLOW COLOR_BOLD "Save file found!" COLOR_RESET);
-    moveTo(4, 5); printf("Continue from where you left off?");
-    moveTo(4, 7); printf(COLOR_BGREEN "[Y] Yes" COLOR_RESET "   " COLOR_BRED "[N] No (start fresh)" COLOR_RESET);
-    fflush(stdout);
-}
 
 // ===============
 //     PRIVATE
