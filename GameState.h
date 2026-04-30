@@ -3,7 +3,6 @@
 
 enum class GameState {
     START_MENU,
-    STORY_OVERVIEW,
     DIFFICULTY_MENU,
     PLAYING,
     PAUSED,

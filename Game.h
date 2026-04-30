@@ -24,7 +24,6 @@ private:
 
     // --- per-state input ---
     void inputStartMenu();
-    void inputStoryOverview();
     void inputDifficultyMenu();
     void inputPlaying();
     void inputPaused();
@@ -33,7 +32,6 @@ private:
 
     // --- per-state update ---
     void updateStartMenu();
-    void updateStoryOverview();
     void updateDifficultyMenu();
     void updatePlaying();
     void updatePaused();
@@ -42,7 +40,6 @@ private:
 
     // --- per-state render ---
     void renderStartMenu();
-    void renderStoryOverview();
     void renderDifficultyMenu();
     void renderPlaying();
     void renderPaused();

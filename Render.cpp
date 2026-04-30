@@ -43,25 +43,6 @@ void Render::drawStartMenu(int menuSelection, bool hasSaveFile) {
     fflush(stdout);
 }
 
-void Render::drawStoryOverview() {
-    clearScreen();
-
-    moveTo(4, 2);  printf(COLOR_BYELLOW COLOR_BOLD " THE LEGEND OF HKU" COLOR_RESET);
-    moveTo(4, 4);  printf(COLOR_BWHITE " Background" COLOR_RESET);
-
-    moveTo(4, 6);  printf("A dark force has spread across the halls and passages");
-    moveTo(4, 7);  printf("of HKU, turning once-familiar spaces into dangerous");
-    moveTo(4, 8);  printf("rooms filled with hostile slimes and hidden threats.");
-
-    moveTo(4, 10); printf("As the hero, you must fight through each area,");
-    moveTo(4, 11); printf("survive enemy attacks, and defeat the final boss");
-    moveTo(4, 12); printf("to restore peace to the campus.");
-
-    moveTo(4, 14); printf(COLOR_CYAN "Enter/Space" COLOR_RESET " Continue");
-    moveTo(4, 15); printf(COLOR_CYAN "B" COLOR_RESET " Back");
-    fflush(stdout);
-}
-
 void Render::drawDifficultyMenu(int menuSelection) {
     clearScreen();
 

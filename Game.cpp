@@ -159,7 +159,6 @@ void Game::startNewGame(Difficulty selectedDifficulty) {
 void Game::input(){
     switch(state){
         case GameState::START_MENU:     inputStartMenu();    break;
-        case GameState::STORY_OVERVIEW: inputStoryOverview(); break;
         case GameState::DIFFICULTY_MENU: inputDifficultyMenu(); break;
         case GameState::PLAYING:  inputPlaying(); break;
         case GameState::PAUSED:   inputPaused();  break;
@@ -188,7 +187,8 @@ void Game::inputStartMenu() {
     case '\n':
     case ' ':
         if (startMenuSelection == 0) {
-            state = GameState::STORY_OVERVIEW;
+            difficultyMenuSelection = 1;  // default to Normal
+            state = GameState::DIFFICULTY_MENU;
         } else if (startMenuSelection == 1) {
             if (hasSaveFile()) {
                 if (loadGame()) {
@@ -199,17 +199,6 @@ void Game::inputStartMenu() {
             exit(0);
         }
         break;
-    }
-}
-
-void Game::inputStoryOverview() {
-    int ch = readKey();
-
-    if (ch == '\n' || ch == ' ') {
-        difficultyMenuSelection = 1; // Medium default
-        state = GameState::DIFFICULTY_MENU;
-    } else if (ch == 'b' || ch == 'B') {
-        state = GameState::START_MENU;
     }
 }
 
@@ -414,7 +403,6 @@ void Game::inputWin(){
 void Game::update(){
     switch(state){
         case GameState::START_MENU:     updateStartMenu();     break;
-        case GameState::STORY_OVERVIEW: updateStoryOverview(); break;
         case GameState::DIFFICULTY_MENU: updateDifficultyMenu(); break;
         case GameState::PLAYING:  updatePlaying();  break;
         case GameState::PAUSED:   updatePaused();   break;
@@ -471,8 +459,7 @@ void Game::saveGame() {
         f << roomSaves[i].roomNumber << " " << roomSaves[i].slimesLeft << "\n";
     }
 }
-void Game::updateStartMenu()    {}
-void Game::updateStoryOverview() {}
+void Game::updateStartMenu() {}
 void Game::updateDifficultyMenu() {}
 void Game::updatePaused()  { /* freeze evrytng  */ }
 void Game::inputSaving() {
@@ -553,7 +540,6 @@ void Game::updatePlaying(){
 void Game::render(){
     switch(state){
         case GameState::START_MENU:     renderStartMenu();     break;
-        case GameState::STORY_OVERVIEW: renderStoryOverview(); break;
         case GameState::DIFFICULTY_MENU: renderDifficultyMenu(); break;
         case GameState::PLAYING:  renderPlaying();  break;
         case GameState::PAUSED:   renderPaused();   break;
@@ -565,10 +551,6 @@ void Game::render(){
 
 void Game::renderStartMenu() {
     renderer.drawStartMenu(startMenuSelection, hasSaveFile());
-}
-
-void Game::renderStoryOverview() {
-    renderer.drawStoryOverview();
 }
 
 void Game::renderDifficultyMenu() {
