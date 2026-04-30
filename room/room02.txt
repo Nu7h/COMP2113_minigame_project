@@ -1,0 +1,17 @@
+room03.txt 0 0 room01.txt
+Composite building
++-----+       ---------------------------------------------------------------------------------+
+|     |                                                   |        #####          #####        |
+|     |                                                   |                                    |
+|     |                                                   |                                    |
+|     |                  +----------+                                                          |
+      |                  |ssssssssss|                                                          |
+      |                  +----------+                     +----------------------------        |
+      |                                                   |                                    |
+|     +---+                                           +---+                                    |
+|         +-+                                       +-+                                        |
++---+       +--+                                 +--+        +---------------------------------+
+ssss+-+        +----+                       +----+         +-+ssssssssssssssssssssssssssssssssss
+ssssss+--+          +-----------------------+          +--+sssssssssssssssssssssssssssssssssssss
+sssssssss+----+                                   +----+ssssssssssssssssssssssssssssssssssssssss
+ssssssssssssss+-----------------------------------+sssssssssssssssssssssssssssssssssssssssssssss

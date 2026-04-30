@@ -1,0 +1,9 @@
+0 0 room02.txt room04.txt
+Stair #1
++--------------+
+               |
+               |
+-------+       |
+sssssss|       |
+sssssss|       |
+sssssss|       |

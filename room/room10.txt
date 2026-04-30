@@ -1,0 +1,18 @@
+room06.txt room09.txt 0 0
+CPD #5
+|       |sssssssssssssssssssssssssssssssssssssssssssssssss
+|       |sssssssssssssssssssssssssssssssssssssssssssssssss
+|       |sssssssssssssssssssssssssssssssssssssssssssssssss
+|       |sssssssssssssssssssssssssssssssssssssssssssssssss
+|       |sssssssssssssssssssssssssssssssssssssssssssssssss
+|       |sssssssssssssssssssssssssssssssssssssssssssssssss
+|       |sssssssssssssssssssssssssssssssssssssssssssssssss
+|       |sssssssssssssssssssssssssssssssssssssssssssssssss
+|       |sssssssssssssssssssssssssssssssssssssssssssssssss
+|       |sssssssssssssssssssssssssssssssssssssssssssssssss
+|       +-------------------------------------------------
+|       
+|       
+|       
+|       
++---------------------------------------------------------
