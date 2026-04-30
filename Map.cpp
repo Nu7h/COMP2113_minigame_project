@@ -22,13 +22,6 @@ bool Map::loadFromFile(const std::string& path) {
     }
 
     if(grid.empty()) return false;
-    int w = grid[0].size();
-
-    for (const auto& row : grid){ 
-        if (row.size() != w) 
-        return false; 
-    }
-
     return true;
 }
 
