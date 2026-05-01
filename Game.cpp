@@ -145,7 +145,10 @@ void Game::startNewGame(Difficulty selectedDifficulty) {
     resetGameSession();
     difficulty = selectedDifficulty;
 
-    spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
+    if(difficulty != Difficulty::EXPLORE){
+        spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
+    }
+    // EXPLORE: no slimes, no boss, no room lock
 
     int rNum = 0;
     if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
@@ -189,6 +192,10 @@ void Game::inputStartMenu() {
     case ' ':
         if (startMenuSelection == 0) {
             difficultyMenuSelection = 1;  // default to Normal
+            if(introOnce){
+                //intro();
+                introOnce = false;
+            }
             state = GameState::DIFFICULTY_MENU;
         } else if (startMenuSelection == 1) {
             if (hasSaveFile()) {
@@ -206,10 +213,6 @@ void Game::inputStartMenu() {
 
 void Game::inputDifficultyMenu() {
     
-    if(introOnce){
-        intro();
-        introOnce = false;
-    }
     int ch = readKey();
 
     switch (ch) {
@@ -234,6 +237,8 @@ void Game::inputDifficultyMenu() {
         } else if (difficultyMenuSelection == 2) {
             startNewGame(Difficulty::HARD);
         } else if (difficultyMenuSelection == 3) {
+            startNewGame(Difficulty::EXPLORE);
+        } else if (difficultyMenuSelection == 4) {
             state = GameState::START_MENU;
         }
         break;
@@ -274,8 +279,25 @@ void Game::inputPlaying(){
     }
     
     if(moved && !player.isShielding){
-    player.move(dx, dy, map);
-    handleRoomTransition(dx, dy);
+    int nx = player.getX() + dx;
+    int ny = player.getY() + dy;
+    int w = map.getWidth();
+    int h = map.getHeight();
+
+    // block walking into locked exits
+    bool atLockedExit = false;
+    if(roomLocked){
+        if(ny < 0 || ny >= h || nx < 0 || nx >= w) atLockedExit = true;
+        else if(ny == 0 && map.getNeighbor('N') != "0" && map.getTile(nx, 0) == ' ') atLockedExit = true;
+        else if(ny == h-1 && map.getNeighbor('S') != "0" && map.getTile(nx, h-1) == ' ') atLockedExit = true;
+        else if(nx == w-1 && map.getNeighbor('E') != "0" && map.getTile(w-1, ny) == ' ') atLockedExit = true;
+        else if(nx == 0 && map.getNeighbor('W') != "0" && map.getTile(0, ny) == ' ') atLockedExit = true;
+    }
+
+    if(!atLockedExit){
+        player.move(dx, dy, map);
+        handleRoomTransition(dx, dy);
+    }
     }
 
 }
@@ -285,7 +307,7 @@ void Game::handleRoomTransition(int dx, int dy){
     int y = player.getY();
     int w = map.getWidth();
     int h = map.getHeight();
-
+    if (roomLocked) return;
     if(y == 0 && dy == -1){
         if(transition || autotrans) tryTransition('N');
     } else if(x == w - 1 && dx == 1){
@@ -317,42 +339,51 @@ bool Game::tryTransition(char dir){
     int w = map.getWidth();
     int h = map.getHeight();
 
-    if(dir == 'N') player.y = h - 1;
-    else if(dir == 'E') player.x = 0;
-    else if(dir == 'S') player.y = 0;
-    else if(dir == 'W') player.x = w - 1;
+    if(dir == 'N') player.y = h - 2;
+    else if(dir == 'E') player.x = 1;
+    else if(dir == 'S') player.y = 1;
+    else if(dir == 'W') player.x = w - 2;
 
     int rNum = 0;
     if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
         // Special handling for room 3 - spawn boss instead of slimes
         if (rNum == 3) {
             slimes.clear();
-            boss = new Boss();
-            boss->x = w / 2;
-            boss->y = h / 2;
-        } else {
-            // Regular slime spawning for other rooms
-            int savedSlimes = -1;
-            for(int i = 0; i < numRoomSaves; i++) {
-                if(roomSaves[i].roomNumber == rNum) {
-                    savedSlimes = roomSaves[i].slimesLeft;
-                    break;
-                }
+            if(difficulty != Difficulty::EXPLORE){
+                boss = new Boss();
+                boss->x = w / 2;
+                boss->y = h / 2;
             }
-
-            if (savedSlimes == -1) {
-                spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
-                if (numRoomSaves < 100) {
-                    roomSaves[numRoomSaves].roomNumber = rNum;
-                    roomSaves[numRoomSaves].slimesLeft = slimes.size();
-                    numRoomSaves++;
+        } else {
+            slimes.clear();  // always clear first
+            if(difficulty != Difficulty::EXPLORE){  // only spawn if not explore
+                int savedSlimes = -1;
+                for(int i = 0; i < numRoomSaves; i++) {
+                    if(roomSaves[i].roomNumber == rNum) {
+                        savedSlimes = roomSaves[i].slimesLeft;
+                        break;
+                    }
                 }
-            } else {
-                spawnSlimes_Count(slimes, map, player.getX(), player.getY(), difficulty, savedSlimes);
+                if (savedSlimes == -1) {
+                    spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
+                    if (numRoomSaves < 100) {
+                        roomSaves[numRoomSaves].roomNumber = rNum;
+                        roomSaves[numRoomSaves].slimesLeft = slimes.size();
+                        numRoomSaves++;
+                    }
+                } else {
+                    spawnSlimes_Count(slimes, map, player.getX(), player.getY(), difficulty, savedSlimes);
+                }
             }
         }
     } else {
         spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
+    }
+
+    if (difficulty != Difficulty::EXPLORE && (boss != nullptr || !slimes.empty())) {
+        roomLocked = true;
+    } else {
+        roomLocked = false;
     }
 
     return true;
@@ -542,6 +573,13 @@ void Game::updatePlaying(){
     if (player.hp <= 0){
         state = GameState::GAME_OVER;
     }
+    if (difficulty == Difficulty::EXPLORE) {
+        roomLocked = false;
+    } else if (boss != nullptr || !slimes.empty()) {
+        roomLocked = true;
+    } else {
+        roomLocked = false;
+    }
 }   
 
 
@@ -570,7 +608,7 @@ void Game::renderDifficultyMenu() {
 }
 
 void Game::renderPlaying(){
-    renderer.drawGame(map, player, slimes, boss, isAttacking, attackX, attackY);
+    renderer.drawGame(map, player, slimes, boss, isAttacking, attackX, attackY, roomLocked);
 }
 
 void Game::renderPaused(){

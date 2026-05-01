@@ -79,7 +79,7 @@ private:
 
     // --- menu ---
     static constexpr int startMenuOptionCount = 3; // New/ Continue/ Quit
-    static constexpr int difficultyMenuOptionCount = 4; // Easy/ Normal/ Hard / Back
+    static constexpr int difficultyMenuOptionCount = 5; // Easy/ Normal/ Hard / Back
     int startMenuSelection = 0;
     int difficultyMenuSelection = 1; // Default to Normal
     Difficulty difficulty = Difficulty::NORMAL;
@@ -88,6 +88,7 @@ private:
     std::string currentRoom = "room/room0.txt";
     bool autotrans = true; // set true if want autotransition w/o pressing E and false otherwise.
     bool transition = false;
+    bool roomLocked = false;
 
     bool tryTransition(char dir);
     void handleRoomTransition(int dx, int dy);

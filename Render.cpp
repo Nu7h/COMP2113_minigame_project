@@ -55,18 +55,19 @@ void Render::drawDifficultyMenu(int menuSelection) {
                           menuSelection == 1 ? ">" : " ");
     moveTo(4, 8);  printf("%s " COLOR_BRED "Hard" COLOR_RESET,
                           menuSelection == 2 ? ">" : " ");
-    moveTo(4, 9);  printf("%s Back",
+    moveTo(4, 9);  printf("%s " COLOR_CYAN    "Explore" COLOR_RESET, 
                           menuSelection == 3 ? ">" : " ");
-
-    moveTo(4, 11); printf(COLOR_CYAN "W/S" COLOR_RESET " to move, "
+    moveTo(4, 10); printf("%s Back",                                  
+                          menuSelection == 4 ? ">" : " ");
+    moveTo(4, 12); printf(COLOR_CYAN "W/S" COLOR_RESET " to move, "
                           COLOR_CYAN "Enter" COLOR_RESET " to select");
     fflush(stdout);
 }
 
-void Render::drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY){
+void Render::drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY,  bool roomLocked){
     clearScreen();
     drawMap(map);
-    
+    drawLockedDoors(map, roomLocked);
     for (const auto& slime : slimes) {
         drawEnemy(slime);
     }
@@ -143,7 +144,8 @@ void Render::drawMap(const Map& map){
         for(int x = 0; x < map.getWidth(); x++){
             drawTile(x, y+1, map.getTile(x, y));
         }      
-    }      
+    }
+
 }
 
 void Render::drawPlayer(const Player& player, const Map& map){
@@ -269,4 +271,48 @@ void Render::drawTile(int x, int y, char tile){
     } else {
         putchar(tile);
     }
+}
+
+void Render::drawLockedDoors(const Map& map, bool roomLocked){
+    if(!roomLocked) return;
+
+    int w = map.getWidth();
+    int h = map.getHeight();
+
+    if(map.getNeighbor('N') != "0"){
+    for(int x = 1; x < w-1; x++){
+        char t = map.getTile(x, 0);
+        if(t != '+' && t != '-' && t != '|' && t != 's'){
+            moveTo(x, 1);
+            printf(COLOR_RED COLOR_BOLD "X" COLOR_RESET);
+        }
+    }
+}
+if(map.getNeighbor('S') != "0"){
+    for(int x = 1; x < w-1; x++){
+        char t = map.getTile(x, h-1);
+        if(t != '+' && t != '-' && t != '|' && t != 's'){
+            moveTo(x, h);
+            printf(COLOR_RED COLOR_BOLD "X" COLOR_RESET);
+        }
+    }
+}
+if(map.getNeighbor('E') != "0"){
+    for(int y = 1; y < h-1; y++){
+        char t = map.getTile(w-1, y);
+        if(t != '+' && t != '|' && t != '-' && t != 's'){
+            moveTo(w-1, y+1);
+            printf(COLOR_RED COLOR_BOLD "X" COLOR_RESET);
+        }
+    }
+}
+if(map.getNeighbor('W') != "0"){
+    for(int y = 1; y < h-1; y++){
+        char t = map.getTile(0, y);
+        if(t != '+' && t != '|' && t != '-' && t != 's'){
+            moveTo(0, y+1);
+            printf(COLOR_RED COLOR_BOLD "X" COLOR_RESET);
+        }
+    }
+}
 }

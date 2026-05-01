@@ -10,7 +10,7 @@ class Render {
 public:
     void drawStartMenu(int menuSelection, bool hasSaveFile);
     void drawDifficultyMenu(int menuSelection);
-    void drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY);
+    void drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY,  bool roomLocked);
     void drawPauseOverlay();
     void drawGameOver();
     void drawWin();
@@ -18,6 +18,7 @@ public:
 
 private:
     void drawMap(const Map& map);
+    void drawLockedDoors(const Map& map, bool roomLocked);
     void drawPlayer(const Player& player, const Map& map);
     void drawEnemy(const Enemy& enemy);
     void drawBoss(const class Boss& boss);
