@@ -268,24 +268,24 @@ void Game::inputPlaying(){
     
     if(moved && !player.isShielding){
     player.move(dx, dy, map);
-    handleRoomTransition();
+    handleRoomTransition(dx, dy);
     }
 
 }
 
-void Game::handleRoomTransition(){
+void Game::handleRoomTransition(int dx, int dy){
     int x = player.getX();
     int y = player.getY();
     int w = map.getWidth();
     int h = map.getHeight();
 
-    if(y == 0){
+    if(y == 0 && dy == -1){
         if(transition || autotrans) tryTransition('N');
-    } else if(x == w - 1){
+    } else if(x == w - 1 && dx == 1){
         if(transition || autotrans) tryTransition('E');
-    } else if(y == h - 1){
+    } else if(y == h - 1 && dy == 1){
         if(transition || autotrans) tryTransition('S');
-    } else if(x == 0){
+    } else if(x == 0 && dx == -1){
         if(transition || autotrans) tryTransition('W');
     }
 

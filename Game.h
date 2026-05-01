@@ -89,7 +89,7 @@ private:
     bool transition = false;
 
     bool tryTransition(char dir);
-    void handleRoomTransition();
+    void handleRoomTransition(int dx, int dy);
 
     struct RoomSaveData {
         int roomNumber;
