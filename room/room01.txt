@@ -11,6 +11,6 @@ Haking wong building
 |                                                              
 |                    +------------+        #        #         |
 |                                 |                           |
-+------------+       +----------------------------------------+
-sssssssssssss|       |sssssssssssssssssssssssssssssssssssssssss
-sssssssssssss|       |sssssssssssssssssssssssssssssssssssssssss
++-----------+       +-----------------------------------------+
+ssssssssssss|       |ssssssssssssssssssssssssssssssssssssssssss
+ssssssssssss|       |ssssssssssssssssssssssssssssssssssssssssss
