@@ -1,5 +1,10 @@
 #include "Outro.h"
-
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <thread>
+#include <chrono>
+#include <conio.h> // add this
 using namespace std;
 
 //run through g++ cutscene.cpp -o cutscene
@@ -10,8 +15,8 @@ static bool skipCutscene = false;
 
 // Non-blocking check: sets skipCutscene if 'S' is pressed
 static void checkSkipKey() {
-    unsigned char c = 0;
-    if (read(STDIN_FILENO, &c, 1) == 1) {
+    if (_kbhit()) {
+        char c = _getch();
         if (c == 's' || c == 'S') {
             skipCutscene = true;
         }
@@ -161,7 +166,6 @@ void dialogue(const string& sceneFile, const string& textFile,
     cout << endl;
     typeLine(textFile, line, delaySeconds);
 }
-
 
 void outro() {
     skipCutscene = false;  // reset flag at the start of each intro
