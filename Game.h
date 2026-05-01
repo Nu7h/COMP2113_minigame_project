@@ -73,13 +73,14 @@ private:
     int attackX = 0;
     int attackY = 0;
     int dmgTimer = 0;
-
+    int slimeDmgTimer = 0;
+    
     // --- render ---
     Render renderer;
 
     // --- menu ---
     static constexpr int startMenuOptionCount = 3; // New/ Continue/ Quit
-    static constexpr int difficultyMenuOptionCount = 5; // Easy/ Normal/ Hard / Back
+    static constexpr int difficultyMenuOptionCount = 5; // Easy/ Normal/ Hard / Back / Explore
     int startMenuSelection = 0;
     int difficultyMenuSelection = 1; // Default to Normal
     Difficulty difficulty = Difficulty::NORMAL;

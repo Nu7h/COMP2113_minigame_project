@@ -531,7 +531,7 @@ void Game::updatePlaying(){
         if (isAttacking && boss->isHitByAttack(attackX, attackY)) {
             if(dmgTimer == 0){
                 boss->hp -= 50;
-                dmgTimer = 5;
+                dmgTimer = 4;
             }
             if (boss->hp <= 0) {
                 delete boss;
@@ -549,27 +549,30 @@ void Game::updatePlaying(){
         if (isAttacking) {
             for (auto e = slimes.begin(); e != slimes.end(); ) {
                 if (e->x == attackX && e->y == attackY) {
-                    e->hp -= 10; 
-                    if (e->hp <= 0) {
-                        e = slimes.erase(e);
-                        int rNum = 0;
-                        if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
-                            for(int i = 0; i < numRoomSaves; i++) {
-                                if(roomSaves[i].roomNumber == rNum) {
-                                    roomSaves[i].slimesLeft--;
-                                    break;
+                    if(slimeDmgTimer == 0){        // add timer check
+                        e->hp -= 10;
+                        slimeDmgTimer = 3;
+                        if (e->hp <= 0) {
+                            e = slimes.erase(e);
+                            int rNum = 0;
+                            if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
+                                for(int i = 0; i < numRoomSaves; i++) {
+                                    if(roomSaves[i].roomNumber == rNum) {
+                                        roomSaves[i].slimesLeft--;
+                                        break;
+                                    }
                                 }
                             }
+                            continue;
                         }
                     }
-                    else ++e;
+                    ++e;
                 } else ++e;
             }
         }
     }
-    if(dmgTimer > 0){
-        dmgTimer--;
-    }
+    if(dmgTimer > 0)      dmgTimer--;
+    if(slimeDmgTimer > 0) slimeDmgTimer--;  // add this
     if (player.hp <= 0){
         state = GameState::GAME_OVER;
     }

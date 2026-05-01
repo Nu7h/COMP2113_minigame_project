@@ -84,7 +84,7 @@ void Render::drawGame(const Map& map, const Player& player, const std::vector<Sl
     }
     drawAttack(isAttacking, attackX, attackY, player.getLastX());
     drawPlayer(player, map);
-    drawHUD(map, player.hp, player.maxHp, boss, roomLocked, (int)slimes.size());
+    drawHUD(map, player.hp, player.maxHp, boss, roomLocked, slimes);
     fflush(stdout);
 }
 
@@ -210,7 +210,7 @@ void Render::drawBoss(const class Boss& boss){
     printf("%s / \\" COLOR_RESET, color);
 }
 
-void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss, bool roomLocked, int slimesLeft){
+void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss, bool roomLocked, const std::vector<Slime>& slimes){
     moveTo(0, map.getHeight() + 2);
 
     if (boss != nullptr) {
@@ -221,11 +221,24 @@ void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss, bool r
         if(bossHealthPercent <= 50) bossHpColor = COLOR_BYELLOW;
         if(bossHealthPercent <= 25) bossHpColor = COLOR_BRED;
         
-        printf("%sBOSS HP: [%d/%d] (%d%%)%s  ",
+        printf("%sBOSS HP: [%d/%d] (%d%%)%s\n",
             bossHpColor, boss->hp, boss->maxHp, bossHealthPercent, COLOR_RESET);
+    }
+    // slime HP list
+    if(!slimes.empty()){
+        printf("\n");
+        for(int i = 0; i < (int)slimes.size(); i++){
+            int filled = (slimes[i].hp * 5) / 100;
+            const char* barColor = COLOR_BGREEN;
+            if(filled <= 3) barColor = COLOR_BYELLOW;
+            if(filled <= 1) barColor = COLOR_BRED;
+            printf("Slime %d: %s", i + 1, barColor);
+            for(int b = 0; b < 5; b++)
+                putchar(b < filled ? '#' : '.');
+            printf("  " COLOR_RESET);
+        }
         printf("\n");
     }
-
     int hpClamped = std::max(0, std::min(hp, maxHp));
     int hearts = (hpClamped * 3) / maxHp;
 
@@ -245,11 +258,11 @@ void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss, bool r
         hp, maxHp,
         COLOR_RESET);
 
-    // room lock status — only show for slime rooms
     if(roomLocked && boss == nullptr){
         printf("  " COLOR_RED COLOR_BOLD "[LOCKED: %d slime%s left]" COLOR_RESET,
-            slimesLeft, slimesLeft == 1 ? "" : "s");
+            (int)slimes.size(), slimes.size() == 1 ? "" : "s");
     }
+
 }
 
 void Render::drawAttack(bool isAttacking, int attackX, int attackY, int lastX){
