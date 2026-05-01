@@ -84,7 +84,7 @@ void Render::drawGame(const Map& map, const Player& player, const std::vector<Sl
     }
     drawAttack(isAttacking, attackX, attackY, player.getLastX());
     drawPlayer(player, map);
-    drawHUD(map, player.hp, player.maxHp, boss);
+    drawHUD(map, player.hp, player.maxHp, boss, roomLocked, (int)slimes.size());
     fflush(stdout);
 }
 
@@ -210,9 +210,8 @@ void Render::drawBoss(const class Boss& boss){
     printf("%s / \\" COLOR_RESET, color);
 }
 
-void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss){
+void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss, bool roomLocked, int slimesLeft){
     moveTo(0, map.getHeight() + 2);
-    
 
     if (boss != nullptr) {
         int bosshpClamped = std::max(0, std::min(boss->hp, boss->maxHp));
@@ -222,34 +221,35 @@ void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss){
         if(bossHealthPercent <= 50) bossHpColor = COLOR_BYELLOW;
         if(bossHealthPercent <= 25) bossHpColor = COLOR_BRED;
         
-        printf("%sBOSS HP: %s[%d/%d] (%d%%)%s  "
-            ,
-            bossHpColor,
-            bossHpColor,
-            boss->hp, boss->maxHp,
-            bossHealthPercent,
-            COLOR_RESET);
+        printf("%sBOSS HP: [%d/%d] (%d%%)%s  ",
+            bossHpColor, boss->hp, boss->maxHp, bossHealthPercent, COLOR_RESET);
         printf("\n");
     }
-        // Regular player HP display
-        int hpClamped = std::max(0, std::min(hp, maxHp));
-        int hearts = (hpClamped * 3) / maxHp;
 
-        const char* hpColor = COLOR_BGREEN;
-        if(hearts == 1) hpColor = COLOR_BYELLOW;
-        if(hearts <= 0) hpColor = COLOR_BRED;
+    int hpClamped = std::max(0, std::min(hp, maxHp));
+    int hearts = (hpClamped * 3) / maxHp;
 
-        printf("%sHP: %s%s%s  [%d/%d]%s  "
-                COLOR_CYAN "[P]" COLOR_RESET "Pause "
-               COLOR_CYAN "[Q]" COLOR_RESET "Quit "
-               COLOR_CYAN "[SPC]" COLOR_RESET "Atk "
-               COLOR_CYAN "[C]" COLOR_RESET "Def",
-            hpColor,
-            hearts >= 0 ? "<3" : "  ",
-            hearts >= 1 ? "<3" : "  ",
-            hearts >= 2 ? "<3" : "  ",
-            hp, maxHp,
-            COLOR_RESET);
+    const char* hpColor = COLOR_BGREEN;
+    if(hearts == 1) hpColor = COLOR_BYELLOW;
+    if(hearts <= 0) hpColor = COLOR_BRED;
+
+    printf("%sHP: %s%s%s  [%d/%d]%s  "
+           COLOR_CYAN "[P]" COLOR_RESET "Pause "
+           COLOR_CYAN "[Q]" COLOR_RESET "Quit "
+           COLOR_CYAN "[SPC]" COLOR_RESET "Atk "
+           COLOR_CYAN "[C]" COLOR_RESET "Def",
+        hpColor,
+        hearts >= 0 ? "<3" : "  ",
+        hearts >= 1 ? "<3" : "  ",
+        hearts >= 2 ? "<3" : "  ",
+        hp, maxHp,
+        COLOR_RESET);
+
+    // room lock status — only show for slime rooms
+    if(roomLocked && boss == nullptr){
+        printf("  " COLOR_RED COLOR_BOLD "[LOCKED: %d slime%s left]" COLOR_RESET,
+            slimesLeft, slimesLeft == 1 ? "" : "s");
+    }
 }
 
 void Render::drawAttack(bool isAttacking, int attackX, int attackY, int lastX){

@@ -25,7 +25,7 @@ private:
     void drawProjectile(const slimeProjectile& projectile);
     void drawBossProjectile(const struct bossProjectile& projectile);
     void drawAttack(bool isAttacking, int attackX, int attackY, int lastX);
-    void drawHUD(const Map& map, int hp, int maxHp, class Boss* boss);
+    void drawHUD(const Map& map, int hp, int maxHp, class Boss* boss, bool roomLocked, int slimesLeft);
     void drawTile(int x, int y, char tile);
 
 };
