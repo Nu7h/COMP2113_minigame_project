@@ -1,9 +1,3 @@
-#include <iostream>
-#include <ctime>
-#include <vector>
-#include "Map.h"
-#include <cstdlib>
-#include <algorithm>
 #include "Enemy.h"
 
 using namespace std;

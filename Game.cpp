@@ -490,32 +490,52 @@ bool Game::loadGame() {
         numRoomSaves = 0;
     }
     
-    int rNum = 0;
-    int spawned = 0;
-    if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
-        for(int i = 0; i < numRoomSaves; i++) {
-            if(roomSaves[i].roomNumber == rNum) {
-                spawnSlimes_Count(slimes, map, px, py, difficulty, roomSaves[i].slimesLeft);
-                spawned = 1;
-                break;
+    int bossExists;
+    f >> bossExists;
+
+    if (bossExists == 1) {
+        boss = new Boss();
+        f >> boss->x >> boss->y >> boss->hp;
+        boss->difficulty = difficulty;   // IMPORTANT
+    } else {
+        boss = nullptr;
+        int rNum = 0;
+        int spawned = 0;
+        if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
+            for(int i = 0; i < numRoomSaves; i++) {
+                if(roomSaves[i].roomNumber == rNum) {
+                    spawnSlimes_Count(slimes, map, px, py, difficulty, roomSaves[i].slimesLeft);
+                    spawned = 1;
+                    break;
+                }
             }
         }
-    }
-    if (!spawned) {
-        spawnSlimes_Difficulty(slimes, map, px, py, difficulty);
+        if (!spawned) {
+            spawnSlimes_Difficulty(slimes, map, px, py, difficulty);
+        }
     }
     return true;
 }
 void Game::saveGame() {
     std::ofstream f("save.dat");
+
     f << currentRoom << "\n"
       << player.x << "\n"
       << player.y << "\n"
       << player.hp << "\n"
       << static_cast<int>(difficulty) << "\n"
       << numRoomSaves << "\n";
+
     for (int i = 0; i < numRoomSaves; ++i) {
         f << roomSaves[i].roomNumber << " " << roomSaves[i].slimesLeft << "\n";
+    }
+
+    // ✅ ADD BOSS SAVE
+    if (boss != nullptr) {
+        f << 1 << "\n";                 // boss exists
+        f << boss->x << " " << boss->y << " " << boss->hp << "\n";
+    } else {
+        f << 0 << "\n";                 // no boss
     }
 }
 void Game::updateStartMenu() {}

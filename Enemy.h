@@ -4,10 +4,12 @@
 #include "Map.h"
 #include "Entity.h"
 #include "Player.h"
+#include "Difficulty.h"
 #include <iostream>
 #include <ctime>
 #include <vector>
 #include <cstdlib>
+
 class Player;
 class Slime;
 class Boss;
