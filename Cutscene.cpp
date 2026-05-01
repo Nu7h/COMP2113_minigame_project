@@ -1,11 +1,4 @@
 #include "Cutscene.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <thread>
-#include <chrono>
-#include <cstdlib>
-#include <unistd.h>
 
 using namespace std;
 

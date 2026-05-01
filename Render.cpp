@@ -238,10 +238,10 @@ void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss, bool r
         for(int i = 0; i < (int)slimes.size(); i++){
             int filled = (slimes[i].hp * 5) / 100;
             const char* barColor = COLOR_BGREEN;
-            if(filled <= 3) barColor = COLOR_BYELLOW;
+            if(filled <= 2) barColor = COLOR_BYELLOW;
             if(filled <= 1) barColor = COLOR_BRED;
             printf("Slime %d: %s", i + 1, barColor);
-            for(int b = 0; b < 5; b++)
+            for(int b = 0; b < 3; b++)
                 putchar(b < filled ? '#' : '.');
             printf("  " COLOR_RESET);
         }

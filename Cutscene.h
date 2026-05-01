@@ -3,6 +3,11 @@
 
 #include <string>
 #include <fstream>
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include <cstdlib>
+#include <unistd.h>
 
 // Utility
 void clearScreen();

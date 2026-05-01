@@ -10,6 +10,13 @@
 #include "Cutscene.h"
 #include <string>
 #include <vector>
+#include <chrono>
+#include <thread>
+#include <unistd.h> 
+#include <cstdlib>
+#include <random>
+#include <utility>
+#include <fstream> 
 
 class Game {
 public:

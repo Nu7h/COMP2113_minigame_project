@@ -1,12 +1,4 @@
 #include "Game.h"
-#include <chrono>
-#include <thread>
-#include <unistd.h> 
-#include <cstdlib>
-#include <random>
-#include <vector>
-#include <utility>
-#include <fstream> 
 
 namespace {
 
@@ -425,6 +417,7 @@ void Game::inputPaused(){
 void Game::inputGameOver(){
     int ch = readKey();
     if(ch == ' ' || ch == '\n'){
+        std::remove("save.dat");
         player = Player();
         currentRoom = "room/room0.txt";
         map.loadFromFile(currentRoom);
@@ -445,6 +438,7 @@ void Game::inputGameOver(){
 void Game::inputWin(){
     int ch = readKey();
     if(ch == '\n' || ch == ' '){
+        std::remove("save.dat");
         player = Player();
         currentRoom = "room/room0.txt";
         map.loadFromFile(currentRoom);

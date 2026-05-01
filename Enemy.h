@@ -4,7 +4,10 @@
 #include "Map.h"
 #include "Entity.h"
 #include "Player.h"
-
+#include <iostream>
+#include <ctime>
+#include <vector>
+#include <cstdlib>
 class Player;
 class Slime;
 class Boss;
@@ -41,7 +44,7 @@ class Enemy : public Entity {
 class Slime : public Enemy{
 
     public:
-        int hp = 100;
+        int hp = 60;
 
 };
 
