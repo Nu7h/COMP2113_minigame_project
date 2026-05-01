@@ -577,6 +577,7 @@ void Game::updatePlaying(){
             if (boss->hp <= 0) {
                 delete boss;
                 boss = nullptr;
+                //outro();
                 state = GameState::WIN;
             }
         }

@@ -1,11 +1,4 @@
-#include "Cutscene.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <thread>
-#include <chrono>
-#include <cstdlib>
-#include <unistd.h>
+#include "Outro.h"
 
 using namespace std;
 
@@ -170,7 +163,7 @@ void dialogue(const string& sceneFile, const string& textFile,
 }
 
 
-void intro() {
+void outro() {
     skipCutscene = false;  // reset flag at the start of each intro
 
     // Show skip hint

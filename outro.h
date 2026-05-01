@@ -1,16 +1,21 @@
-#ifndef CUTSCENE_H
-#define CUTSCENE_H
+#ifndef OUTRO_H
+#define OUTRO_H
 
-#include <string>
+#include <iostream>
 #include <fstream>
-
+#include <string>
+#include <thread>
+#include <chrono>
+#include <cstdlib>
+#include <unistd.h>
+#include "Cutscene.h"
 // Main public functions (these are what other files should use)
 void playScene(const std::string& filename, double wait);
 void typeScene(const std::string& filename, double delaySeconds);
 void typeLine(const std::string& filename, int targetLine, double delaySeconds);
 void dialogue(const std::string& sceneFile, const std::string& textFile,
               double delaySeconds, double wait, int line);
-void intro();
+void outro();
 
 // Utility functions (optional to expose — you can hide them if you want)
 void clearScreen();
