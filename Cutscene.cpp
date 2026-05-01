@@ -5,18 +5,39 @@
 #include <thread>
 #include <chrono>
 #include <cstdlib>
+#include <unistd.h>
 
 using namespace std;
 
 //run through g++ cutscene.cpp -o cutscene
 // ./cutscene
 
+// ---- Skip state ----
+static bool skipCutscene = false;
+
+// Non-blocking check: sets skipCutscene if 'S' is pressed
+static void checkSkipKey() {
+    unsigned char c = 0;
+    if (read(STDIN_FILENO, &c, 1) == 1) {
+        if (c == 's' || c == 'S') {
+            skipCutscene = true;
+        }
+    }
+}
+
 void clearScreen() {
     cout << "\033[2J\033[H" << flush;
 }
 
+// Waits in small slices so it can detect the skip key mid-wait
 void waitSeconds(double seconds) {
-    this_thread::sleep_for(chrono::duration<double>(seconds));
+    const double slice = 0.05;
+    double elapsed = 0.0;
+    while (elapsed < seconds && !skipCutscene) {
+        this_thread::sleep_for(chrono::duration<double>(slice));
+        elapsed += slice;
+        checkSkipKey();
+    }
 }
 
 // For playScene / typeScene
@@ -41,6 +62,7 @@ void processChar(char c, ifstream& file, bool useDelay, double delaySeconds) {
         if (useDelay) {
             cout.flush();
             this_thread::sleep_for(chrono::duration<double>(delaySeconds));
+            checkSkipKey();
         }
     }
 }
@@ -68,12 +90,15 @@ void processCharInline(char c, const string& line, size_t& i, bool useDelay, dou
         if (useDelay) {
             cout.flush();
             this_thread::sleep_for(chrono::duration<double>(delaySeconds));
+            checkSkipKey();
         }
     }
 }
 
 
 void playScene(const string& filename, double wait) {
+    if (skipCutscene) return;
+
     clearScreen();
 
     ifstream file(filename);
@@ -83,7 +108,7 @@ void playScene(const string& filename, double wait) {
     }
 
     char c;
-    while (file.get(c)) {
+    while (file.get(c) && !skipCutscene) {
         processChar(c, file, false, 0);
     }
 
@@ -92,6 +117,8 @@ void playScene(const string& filename, double wait) {
 }
 
 void typeScene(const string& filename, double delaySeconds) {
+    if (skipCutscene) return;
+
     ifstream file(filename);
     if (!file) {
         cout << "Error: Cannot open file " << filename << endl;
@@ -99,7 +126,7 @@ void typeScene(const string& filename, double delaySeconds) {
     }
 
     char c;
-    while (file.get(c)) {
+    while (file.get(c) && !skipCutscene) {
         processChar(c, file, true, delaySeconds);
     }
 
@@ -107,6 +134,8 @@ void typeScene(const string& filename, double delaySeconds) {
 }
 
 void typeLine(const string& filename, int targetLine, double delaySeconds) {
+    if (skipCutscene) return;
+
     ifstream file(filename);
     if (!file) {
         cout << "Error: Cannot open file " << filename << endl;
@@ -118,7 +147,7 @@ void typeLine(const string& filename, int targetLine, double delaySeconds) {
 
     while (getline(file, line)) {
         if (currentLine == targetLine) {
-            for (size_t i = 0; i < line.size(); i++) {
+            for (size_t i = 0; i < line.size() && !skipCutscene; i++) {
                 processCharInline(line[i], line, i, true, delaySeconds);
             }
 
@@ -147,7 +176,7 @@ void spacescene(const string& filename, int space) {
 }
 
 void panscene(const string& filename, int panspace, double waittime) {
-    for (int i = panspace; i >= 0; i--) {
+    for (int i = panspace; i >= 0 && !skipCutscene; i--) {
         clearScreen();
         spacescene(filename, i);
         waitSeconds(waittime);
@@ -156,6 +185,7 @@ void panscene(const string& filename, int panspace, double waittime) {
 
 void dialogue(const string& sceneFile, const string& textFile,
               double delaySeconds, double wait, int line) {
+    if (skipCutscene) return;
 
     playScene(sceneFile, wait);
     cout << endl;
@@ -164,6 +194,12 @@ void dialogue(const string& sceneFile, const string& textFile,
 
 
 void intro() {
+    skipCutscene = false;  // reset flag at the start of each intro
+
+    // Show skip hint
+    clearScreen();
+    cout << "\033[33m  Press S at any time to skip the cutscene...\033[0m" << flush;
+    waitSeconds(1.5);
 
     // opening pan
     panscene("room/1 scene.txt", 20, 0.1);
@@ -180,7 +216,7 @@ void intro() {
     playScene("room/2 scene.txt", 2);
 
     // elevator animation
-    for (int i = 1; i <= 11; i++) {
+    for (int i = 1; i <= 11 && !skipCutscene; i++) {
         string file = "room/3 scene frame " + to_string(i) + ".txt";
         playScene(file, (i == 1 || i == 11) ? 1 : 0.15);
     }
@@ -197,17 +233,28 @@ void intro() {
     playScene("room/4 scene load.txt", 2);
 
     // dialogue
-    for (int i = 1; i <= 6; i++) {
+    for (int i = 1; i <= 6 && !skipCutscene; i++) {
         dialogue("room/5 scene.txt", "room/5 scene dialogue.txt", 0.02, 0, i);
         waitSeconds(2);
     }
 
     // final scene
     playScene("room/6 scene.txt", 3);
-
+    
     for (int i = 1; i <= 2; i++) {
         dialogue("room/5 scene.txt", "room/7 scene dialogue.txt", 0.02, 0, i);
         waitSeconds(2);
     }
 
+    // Clear screen after skip so game starts clean
+    if (skipCutscene) {
+        clearScreen();
+    }
 }
+
+/*
+for (int i = 1; i <= 2; i++) {
+        dialogue("room/5 scene.txt", "room/7 scene dialogue.txt", 0.02, 0, i);
+        waitSeconds(2);
+    }
+*/
