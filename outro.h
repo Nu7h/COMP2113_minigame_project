@@ -8,7 +8,6 @@
 #include <chrono>
 #include <cstdlib>
 #include <unistd.h>
-#include "Cutscene.h"
 // Main public functions (these are what other files should use)
 void playScene(const std::string& filename, double wait);
 void typeScene(const std::string& filename, double delaySeconds);

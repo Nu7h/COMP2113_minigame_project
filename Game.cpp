@@ -11,9 +11,13 @@ bool introOnce = true;
 
 void placeSlimeRandom(Slime& slime, const Map& map, int avoidX, int avoidY, const std::vector<Slime>& existingSlimes){
     std::vector<std::pair<int, int>> cells;
-    cells.reserve(static_cast<std::size_t>(map.getWidth() * map.getHeight()));
+
     for(int yy = 0; yy < map.getHeight(); ++yy){
         for(int xx = 0; xx < map.getWidth(); ++xx){
+
+            if(map.getTile(xx, yy) == 'X')
+                continue;
+
             if(!map.isWalkable(xx, yy) || (xx == avoidX && yy == avoidY))
                 continue;
 
@@ -24,31 +28,37 @@ void placeSlimeRandom(Slime& slime, const Map& map, int avoidX, int avoidY, cons
                     break;
                 }
             }
+
             if(!occupied){
                 cells.emplace_back(xx, yy);
             }
         }
     }
-    if(cells.empty())
-        return;
+
+    if(cells.empty()) return;
+
     std::uniform_int_distribution<std::size_t> dist(0, cells.size() - 1);
-    const auto& pick = cells[dist(gameRng())];
+    auto pick = cells[dist(gameRng())];
+
     slime.x = pick.first;
     slime.y = pick.second;
 }
 
 void spawnSlimes_Count(std::vector<Slime>& slimes, const Map& map, int px, int py, Difficulty difficulty, int count){
     slimes.clear();
+
+    if (count <= 0) return;
+
     int slimeSpeed = 10;
-    if( difficulty == Difficulty::NORMAL){
-        slimeSpeed = 8;
-    }else if( difficulty == Difficulty::HARD){
-        slimeSpeed = 6;
-    }
+    if (difficulty == Difficulty::NORMAL) slimeSpeed = 8;
+    else if (difficulty == Difficulty::HARD) slimeSpeed = 6;
+
     for (int i = 0; i < count; i++){
         Slime s;
         s.setmaxmoveCooldown(slimeSpeed);
         placeSlimeRandom(s, map, px, py, slimes);
+        if (map.getTile(s.x, s.y) == 'X') continue;
+
         slimes.push_back(s);
     }
 }
