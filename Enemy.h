@@ -52,6 +52,10 @@ struct bossProjectile {
     int x, y;
     int dx, dy;
     int moveCooldown = 10;
+    bool tracked = false;        // re-aims toward (targetX, targetY) each step
+    int targetX = 0;
+    int targetY = 0;
+    bool splitOnArrival = false; // on reaching target, spawn 8-dir spray and expire
 };
 
 class Boss : public Enemy{

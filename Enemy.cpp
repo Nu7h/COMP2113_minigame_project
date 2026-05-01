@@ -126,32 +126,38 @@ void Boss::updateBoss(const Player& player, Map& map) {
     if (shootCooldown > 0) {
         shootCooldown--;
     } else {
-        // Time to shoot - fire in 8 directions
-        for (int dir = 0; dir < 8; ++dir) {
-            int dx = 0, dy = 0;
+        // EASY: instant 8-direction spray from the boss.
+        // NORMAL/HARD: fire ONE shot that homes to the player's last position;
+        // when it arrives there it splits into the 8-direction spray.
+        bool aimedAttack = (difficulty == Difficulty::NORMAL || difficulty == Difficulty::HARD);
+        int aimDx = (lastPlayerX > x) - (lastPlayerX < x);
+        int aimDy = (lastPlayerY > y) - (lastPlayerY < y);
 
-            // 8 directional shooting: N, NE, E, SE, S, SW, W, NW
-            if (dir == 0) { dx = 0; dy = -1; }        // N
-            else if (dir == 1) { dx = 1; dy = -1; }   // NE
-            else if (dir == 2) { dx = 1; dy = 0; }    // E
-            else if (dir == 3) { dx = 1; dy = 1; }    // SE
-            else if (dir == 4) { dx = 0; dy = 1; }    // S
-            else if (dir == 5) { dx = -1; dy = 1; }   // SW
-            else if (dir == 6) { dx = -1; dy = 0; }   // W
-            else if (dir == 7) { dx = -1; dy = -1; }  // NW
-
-            bossProjectiles.push_back({x, y, dx, dy, 10});
-        }
-
-        // NORMAL/HARD: extra projectile aimed at the player's last known position
-        if (difficulty == Difficulty::NORMAL || difficulty == Difficulty::HARD) {
-            int aimDx = 0, aimDy = 0;
-            if (lastPlayerX > x)      aimDx = 1;
-            else if (lastPlayerX < x) aimDx = -1;
-            if (lastPlayerY > y)      aimDy = 1;
-            else if (lastPlayerY < y) aimDy = -1;
-            if (aimDx != 0 || aimDy != 0) {
-                bossProjectiles.push_back({x, y, aimDx, aimDy, 10});
+        if (aimedAttack && (aimDx != 0 || aimDy != 0)) {
+            bossProjectile p;
+            p.x = x;
+            p.y = y;
+            p.dx = aimDx;
+            p.dy = aimDy;
+            p.moveCooldown = 10;
+            p.tracked = true;
+            p.targetX = lastPlayerX;
+            p.targetY = lastPlayerY;
+            p.splitOnArrival = true;
+            bossProjectiles.push_back(p);
+        } else {
+            // Easy mode (or boss is on the player's tile): spray immediately.
+            for (int dir = 0; dir < 8; ++dir) {
+                int dx = 0, dy = 0;
+                if      (dir == 0) { dx = 0;  dy = -1; }   // N
+                else if (dir == 1) { dx = 1;  dy = -1; }   // NE
+                else if (dir == 2) { dx = 1;  dy = 0;  }   // E
+                else if (dir == 3) { dx = 1;  dy = 1;  }   // SE
+                else if (dir == 4) { dx = 0;  dy = 1;  }   // S
+                else if (dir == 5) { dx = -1; dy = 1;  }   // SW
+                else if (dir == 6) { dx = -1; dy = 0;  }   // W
+                else if (dir == 7) { dx = -1; dy = -1; }   // NW
+                bossProjectiles.push_back({x, y, dx, dy, 10});
             }
         }
 
@@ -223,17 +229,54 @@ void Boss::updateBoss(const Player& player, Map& map) {
 }
 
 void Boss::updateBossProjectiles(const Map& map, Player& player) {
+    // Collect newly spawned projectiles separately so we don't invalidate
+    // the iterator (push_back can grow the vector mid-iteration).
+    std::vector<bossProjectile> spawned;
+
     for (auto it = bossProjectiles.begin(); it != bossProjectiles.end(); ) {
+        // Tracked shot reached its snapshot target without hitting player.
+        if (it->tracked && it->x == it->targetX && it->y == it->targetY) {
+            if (it->splitOnArrival) {
+                int sx = it->x, sy = it->y;
+                for (int dir = 0; dir < 8; ++dir) {
+                    int dx = 0, dy = 0;
+                    if      (dir == 0) { dx = 0;  dy = -1; }
+                    else if (dir == 1) { dx = 1;  dy = -1; }
+                    else if (dir == 2) { dx = 1;  dy = 0;  }
+                    else if (dir == 3) { dx = 1;  dy = 1;  }
+                    else if (dir == 4) { dx = 0;  dy = 1;  }
+                    else if (dir == 5) { dx = -1; dy = 1;  }
+                    else if (dir == 6) { dx = -1; dy = 0;  }
+                    else if (dir == 7) { dx = -1; dy = -1; }
+                    bossProjectile sp;
+                    sp.x = sx;
+                    sp.y = sy;
+                    sp.dx = dx;
+                    sp.dy = dy;
+                    sp.moveCooldown = 0;  // start moving immediately
+                    spawned.push_back(sp);
+                }
+            }
+            it = bossProjectiles.erase(it);
+            continue;
+        }
+
         if (it->moveCooldown > 0) {
             it->moveCooldown--;
             ++it;
             continue;
         }
-        
+
+        // Tracked shots re-aim each step toward the snapshot target
+        if (it->tracked) {
+            it->dx = (it->targetX > it->x) - (it->targetX < it->x);
+            it->dy = (it->targetY > it->y) - (it->targetY < it->y);
+        }
+
         it->x += it->dx;
         it->y += it->dy;
         it->moveCooldown = 4;
-        
+
         if (it->x == player.getX() && it->y == player.getY()) {
             player.takeDamage(15);  // Boss projectiles do more damage
             // HARD: boss heals 100 HP on a successful hit
@@ -248,5 +291,9 @@ void Boss::updateBossProjectiles(const Map& map, Player& player) {
         } else {
             ++it;
         }
+    }
+
+    for (auto& sp : spawned) {
+        bossProjectiles.push_back(sp);
     }
 }
