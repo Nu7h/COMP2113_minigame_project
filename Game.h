@@ -66,6 +66,7 @@ private:
     Boss* boss = nullptr;  // nullptr when not in boss room
     Player player;  
     Map map;
+    std::vector<Heart> hearts;
 
     bool isAttacking = false;
     int attackTimer = 0;

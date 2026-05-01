@@ -64,10 +64,13 @@ void Render::drawDifficultyMenu(int menuSelection) {
     fflush(stdout);
 }
 
-void Render::drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY,  bool roomLocked){
+void Render::drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY,  bool roomLocked, const std::vector<struct Heart>& hearts){
     clearScreen();
     drawMap(map);
     drawLockedDoors(map, roomLocked);
+    for (const auto& heart : hearts) {
+        drawHeart(heart);
+    }
     for (const auto& slime : slimes) {
         drawEnemy(slime);
     }
@@ -96,6 +99,11 @@ void Render::drawProjectile(const slimeProjectile& projectile){
 void Render::drawBossProjectile(const struct bossProjectile& projectile){
     moveTo(projectile.x, projectile.y+1);
     printf(COLOR_BRED COLOR_BOLD "*" COLOR_RESET);
+}
+
+void Render::drawHeart(const Heart& heart) {
+    moveTo(heart.x, heart.y+1);
+    printf(COLOR_RED COLOR_BOLD "♥" COLOR_RESET);
 }
 
 void Render::drawPauseOverlay(){

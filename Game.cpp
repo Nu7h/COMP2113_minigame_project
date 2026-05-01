@@ -125,6 +125,7 @@ void Game::resetGameSession() {
     map.loadFromFile(currentRoom);
 
     slimes.clear();
+    hearts.clear();
 
     if (boss != nullptr) {
         delete boss;
@@ -298,8 +299,20 @@ void Game::inputPlaying(){
         else if(nx == w-1 && map.getNeighbor('E') != "0" && map.getTile(w-1, ny) == ' ') atLockedExit = true;
         else if(nx == 0 && map.getNeighbor('W') != "0" && map.getTile(0, ny) == ' ') atLockedExit = true;
     }
+    
+    // Check if new position collides with slime or boss
+    bool collidesWithEnemy = false;
+    for (const auto& slime : slimes) {
+        if (slime.x == nx && slime.y == ny) {
+            collidesWithEnemy = true;
+            break;
+        }
+    }
+    if (!collidesWithEnemy && boss != nullptr && boss->x == nx && boss->y == ny) {
+        collidesWithEnemy = true;
+    }
 
-    if(!atLockedExit){
+    if(!atLockedExit && !collidesWithEnemy){
         player.move(dx, dy, map);
         handleRoomTransition(dx, dy);
     }
@@ -340,6 +353,8 @@ bool Game::tryTransition(char dir){
         delete boss;
         boss = nullptr;
     }
+
+    hearts.clear();
 
     int w = map.getWidth();
     int h = map.getHeight();
@@ -563,6 +578,12 @@ void Game::updatePlaying(){
                         e->hp -= 10;
                         slimeDmgTimer = 3;
                         if (e->hp <= 0) {
+                            // Drop heart on slime death
+                            Heart heart;
+                            heart.x = e->x;
+                            heart.y = e->y;
+                            hearts.push_back(heart);
+                            
                             e = slimes.erase(e);
                             int rNum = 0;
                             if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
@@ -583,6 +604,17 @@ void Game::updatePlaying(){
     }
     if(dmgTimer > 0)      dmgTimer--;
     if(slimeDmgTimer > 0) slimeDmgTimer--;  // add this
+    
+    // Check for heart collision and heal player
+    for (auto h = hearts.begin(); h != hearts.end(); ) {
+        if (h->x == player.getX() && h->y == player.getY()) {
+            player.hp = std::min(player.hp + 10, player.maxHp);
+            h = hearts.erase(h);
+        } else {
+            ++h;
+        }
+    }
+    
     if (player.hp <= 0){
         state = GameState::GAME_OVER;
     }
@@ -621,7 +653,7 @@ void Game::renderDifficultyMenu() {
 }
 
 void Game::renderPlaying(){
-    renderer.drawGame(map, player, slimes, boss, isAttacking, attackX, attackY, roomLocked);
+    renderer.drawGame(map, player, slimes, boss, isAttacking, attackX, attackY, roomLocked, hearts);
 }
 
 void Game::renderPaused(){

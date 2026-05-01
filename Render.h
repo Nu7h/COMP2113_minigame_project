@@ -6,11 +6,15 @@
 #include "Enemy.h"
 #include <vector>
 #include <algorithm>
+
+struct Heart {
+    int x, y;
+};
 class Render {
 public:
     void drawStartMenu(int menuSelection, bool hasSaveFile);
     void drawDifficultyMenu(int menuSelection);
-    void drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY,  bool roomLocked);
+    void drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY,  bool roomLocked, const std::vector<Heart>& hearts);
     void drawPauseOverlay();
     void drawGameOver();
     void drawWin();
@@ -25,6 +29,7 @@ private:
     void drawProjectile(const slimeProjectile& projectile);
     void drawBossProjectile(const struct bossProjectile& projectile);
     void drawAttack(bool isAttacking, int attackX, int attackY, int lastX);
+    void drawHeart(const Heart& heart);
     void drawHUD(const Map& map, int hp, int maxHp, class Boss* boss, bool roomLocked, const std::vector<Slime>& slimes);
     void drawTile(int x, int y, char tile);
 
