@@ -145,12 +145,17 @@ void Game::startNewGame(Difficulty selectedDifficulty) {
     resetGameSession();
     difficulty = selectedDifficulty;
 
-    if(difficulty != Difficulty::EXPLORE){
+    int rNum = 0;
+    if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
+        // Skip spawning slimes in room 0
+        if (rNum != 0 && difficulty != Difficulty::EXPLORE) {
+            spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
+        }
+    } else if (difficulty != Difficulty::EXPLORE) {
         spawnSlimes_Difficulty(slimes, map, player.getX(), player.getY(), difficulty);
     }
     // EXPLORE: no slimes, no boss, no room lock
 
-    int rNum = 0;
     if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
         roomSaves[0].roomNumber = rNum;
         roomSaves[0].slimesLeft = static_cast<int>(slimes.size());
@@ -346,15 +351,20 @@ bool Game::tryTransition(char dir){
 
     int rNum = 0;
     if (sscanf(currentRoom.c_str(), "room/room%d.txt", &rNum) == 1) {
-        // Special handling for room 3 - spawn boss instead of slimes
-        if (rNum == 3) {
+        // Special handling for room 0 - no slimes
+        if (rNum == 0) {
+            slimes.clear();
+        }
+        // Special handling for room 13 - spawn boss instead of slimes
+        else if (rNum == 13) {
             slimes.clear();
             if(difficulty != Difficulty::EXPLORE){
                 boss = new Boss();
                 boss->x = w / 2;
                 boss->y = h / 2;
             }
-        } else {
+        } 
+        else {
             slimes.clear();  // always clear first
             if(difficulty != Difficulty::EXPLORE){  // only spawn if not explore
                 int savedSlimes = -1;
@@ -385,7 +395,7 @@ bool Game::tryTransition(char dir){
     } else {
         roomLocked = false;
     }
-
+    
     return true;
 }
 
