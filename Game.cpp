@@ -301,7 +301,8 @@ void Game::inputPlaying(){
             break;
         }
     }
-    if (!collidesWithEnemy && boss != nullptr && boss->x == nx && boss->y == ny)
+    if (!collidesWithEnemy && boss != nullptr &&
+        (boss->isHitByAttack(nx, ny) || (boss->x == nx && boss->y == ny)))
         collidesWithEnemy = true;
 
     if(!atLockedExit && !collidesWithEnemy){
@@ -369,6 +370,7 @@ bool Game::tryTransition(char dir){
                 boss = new Boss();
                 boss->x = w / 2;
                 boss->y = h / 2;
+                boss->difficulty = difficulty;
             }
         } 
         else {

@@ -3,6 +3,7 @@
 #include <vector>
 #include "Map.h"
 #include <cstdlib>
+#include <algorithm>
 #include "Enemy.h"
 
 using namespace std;
@@ -142,6 +143,18 @@ void Boss::updateBoss(const Player& player, Map& map) {
             bossProjectiles.push_back({x, y, dx, dy, 10});
         }
 
+        // NORMAL/HARD: extra projectile aimed at the player's last known position
+        if (difficulty == Difficulty::NORMAL || difficulty == Difficulty::HARD) {
+            int aimDx = 0, aimDy = 0;
+            if (lastPlayerX > x)      aimDx = 1;
+            else if (lastPlayerX < x) aimDx = -1;
+            if (lastPlayerY > y)      aimDy = 1;
+            else if (lastPlayerY < y) aimDy = -1;
+            if (aimDx != 0 || aimDy != 0) {
+                bossProjectiles.push_back({x, y, aimDx, aimDy, 10});
+            }
+        }
+
         shootCooldown = shootCooldownTicks;
         attackPhase++;
 
@@ -223,6 +236,10 @@ void Boss::updateBossProjectiles(const Map& map, Player& player) {
         
         if (it->x == player.getX() && it->y == player.getY()) {
             player.takeDamage(15);  // Boss projectiles do more damage
+            // HARD: boss heals 100 HP on a successful hit
+            if (difficulty == Difficulty::HARD) {
+                hp = std::min(hp + 100, maxHp);
+            }
             it = bossProjectiles.erase(it);
         } else if (player.blockProjectile(it->x, it->y)) {
             it = bossProjectiles.erase(it);

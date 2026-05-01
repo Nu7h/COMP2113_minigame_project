@@ -60,6 +60,7 @@ class Boss : public Enemy{
         Boss() : Enemy() {}
         int hp = 1000;
         int maxHp = 1000;
+        Difficulty difficulty = Difficulty::EASY;
         std::vector<bossProjectile> bossProjectiles;
         
         // Boss behavior methods
