@@ -45,3 +45,8 @@ bool Player::blockProjectile(int projX, int projY) const {
     int sy = y + lastY;
     return projX == sx && projY == sy;
 }
+
+void Player::setLast(int dx, int dy){
+    lastX = dx;
+    lastY = dy;
+}

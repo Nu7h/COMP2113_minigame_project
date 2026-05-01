@@ -290,7 +290,9 @@ void Game::inputPlaying(){
     int w = map.getWidth();
     int h = map.getHeight();
 
-    // block walking into locked exits
+    // always update facing direction
+    player.setLast(dx, dy);   // add this before the checks
+
     bool atLockedExit = false;
     if(roomLocked){
         if(ny < 0 || ny >= h || nx < 0 || nx >= w) atLockedExit = true;
@@ -299,8 +301,7 @@ void Game::inputPlaying(){
         else if(nx == w-1 && map.getNeighbor('E') != "0" && map.getTile(w-1, ny) == ' ') atLockedExit = true;
         else if(nx == 0 && map.getNeighbor('W') != "0" && map.getTile(0, ny) == ' ') atLockedExit = true;
     }
-    
-    // Check if new position collides with slime or boss
+
     bool collidesWithEnemy = false;
     for (const auto& slime : slimes) {
         if (slime.x == nx && slime.y == ny) {
@@ -308,15 +309,14 @@ void Game::inputPlaying(){
             break;
         }
     }
-    if (!collidesWithEnemy && boss != nullptr && boss->x == nx && boss->y == ny) {
+    if (!collidesWithEnemy && boss != nullptr && boss->x == nx && boss->y == ny)
         collidesWithEnemy = true;
-    }
 
     if(!atLockedExit && !collidesWithEnemy){
         player.move(dx, dy, map);
         handleRoomTransition(dx, dy);
     }
-    }
+}
 
 }
 

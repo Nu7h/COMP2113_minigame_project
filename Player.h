@@ -22,6 +22,7 @@ public:
     bool takeDamage(int dmg);
     void activateShield();
     void updateShield();
+    void setLast(int dx, int dy);
     bool blockProjectile(int projX, int projY) const;
 
 private:
