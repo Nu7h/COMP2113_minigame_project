@@ -33,4 +33,6 @@ void dialogue(const std::string& sceneFile, const std::string& textFile,
 // High-level sequence
 void intro();
 
+void outro();
+
 #endif // CUTSCENE_H

@@ -195,47 +195,47 @@ void intro() {
     waitSeconds(1.5);
 
     // opening pan
-    panscene("room/1 scene.txt", 20, 0.1);
+    panscene("Intro/1 scene.txt", 20, 0.1);
 
     // show scene
-    playScene("room/1 scene.txt", 2);
+    playScene("Intro/1 scene.txt", 2);
 
     // elevator + blink
-    playScene("room/1 scene cyan.txt", 0.5);
-    playScene("room/1 scene.txt", 0.5);
-    playScene("room/1 scene cyan.txt", 0.5);
-    playScene("room/1 scene.txt", 0.5);
-    playScene("room/1 scene cyan.txt", 0.5);
-    playScene("room/2 scene.txt", 2);
+    playScene("Intro/1 scene cyan.txt", 0.5);
+    playScene("Intro/1 scene.txt", 0.5);
+    playScene("Intro/1 scene cyan.txt", 0.5);
+    playScene("Intro/1 scene.txt", 0.5);
+    playScene("Intro/1 scene cyan.txt", 0.5);
+    playScene("Intro/2 scene.txt", 2);
 
     // elevator animation
     for (int i = 1; i <= 11 && !skipCutscene; i++) {
-        string file = "room/3 scene frame " + to_string(i) + ".txt";
+        string file = "Intro/3 scene frame " + to_string(i) + ".txt";
         playScene(file, (i == 1 || i == 11) ? 1 : 0.15);
     }
 
     // flicker lights
-    playScene("room/4 scene.txt", 1);
-    playScene("room/4 scene black.txt", 1);
-    playScene("room/4 scene.txt", 0.5);
-    playScene("room/4 scene black.txt", 0.5);
-    playScene("room/4 scene.txt", 0.25);
-    playScene("room/4 scene black.txt", 0.25);
-    playScene("room/4 scene.txt", 0.25);
-    playScene("room/4 scene black.txt", 1);
-    playScene("room/4 scene load.txt", 2);
+    playScene("Intro/4 scene.txt", 1);
+    playScene("Intro/4 scene black.txt", 1);
+    playScene("Intro/4 scene.txt", 0.5);
+    playScene("Intro/4 scene black.txt", 0.5);
+    playScene("Intro/4 scene.txt", 0.25);
+    playScene("Intro/4 scene black.txt", 0.25);
+    playScene("Intro/4 scene.txt", 0.25);
+    playScene("Intro/4 scene black.txt", 1);
+    playScene("Intro/4 scene load.txt", 2);
 
     // dialogue
     for (int i = 1; i <= 6 && !skipCutscene; i++) {
-        dialogue("room/5 scene.txt", "room/5 scene dialogue.txt", 0.02, 0, i);
+        dialogue("Intro/5 scene.txt", "Intro/5 scene dialogue.txt", 0.02, 0, i);
         waitSeconds(2);
     }
 
     // final scene
-    playScene("room/6 scene.txt", 3);
+    playScene("Intro/6 scene.txt", 3);
     
     for (int i = 1; i <= 2; i++) {
-        dialogue("room/5 scene.txt", "room/7 scene dialogue.txt", 0.02, 0, i);
+        dialogue("Intro/5 scene.txt", "Intro/7 scene dialogue.txt", 0.02, 0, i);
         waitSeconds(2);
     }
 
@@ -245,6 +245,45 @@ void intro() {
     }
 }
 
+void outro() {
+    skipCutscene = false;  // reset flag at the start of each intro
+
+    // Show skip hint
+    clearScreen();
+    cout << "\033[33m  Press S at any time to skip the outro...\033[0m" << flush;
+    waitSeconds(1.5);
+
+    playScene("Outro/0 outro black.txt", 1);
+    playScene("Outro/0 outro.txt", 0.1);
+    playScene("Outro/0 outro black.txt", 0.5);
+    playScene("Outro/0 outro.txt", 0.15);
+    playScene("Outro/0 outro black.txt", 0.25);
+    playScene("Outro/0 outro.txt", 0.15);
+    playScene("Outro/0 outro black.txt", 0.2);
+    playScene("Outro/0 outro.txt", 0.35);
+    playScene("Outro/0 outro black.txt", 0.2);
+    playScene("Outro/0 outro.txt", 1);
+    playScene("Outro/1 outro 1.txt", 0.3);
+    playScene("Outro/1 outro 2.txt", 0.3);
+    playScene("Outro/1 outro 3.txt", 0.3);
+    playScene("Outro/1 outro 4.txt", 0.3);
+    playScene("Outro/1 outro 5.txt", 0.3);
+    playScene("Outro/1 outro 6.txt", 0.3);
+    playScene("Outro/1 outro 7.txt", 0.3);
+    playScene("Outro/1 outro 8.txt", 0.3);
+
+    // dialogue
+    for (int i = 1; i <= 4 && !skipCutscene; i++) {
+        dialogue("Outro/1 outro 8.txt", "Outro/1 outro dialogue.txt", 0.02, 0, i);
+        waitSeconds(2);
+    }
+
+    // Clear screen after skip so game starts clean
+    if (skipCutscene) {
+        clearScreen();
+    }
+}
+    
 /*
 for (int i = 1; i <= 2; i++) {
         dialogue("room/5 scene.txt", "room/7 scene dialogue.txt", 0.02, 0, i);
