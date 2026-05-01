@@ -7,6 +7,7 @@
 #include "Render.h"
 #include "Enemy.h"
 #include "Difficulty.h"
+#include "Cutscene.h"
 #include <string>
 #include <vector>
 

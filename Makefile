@@ -4,7 +4,7 @@ CXXFLAGS = -std=c++17 -Wall -Wextra
 BUILD_DIR = build
 TARGET = $(BUILD_DIR)/game
 
-SRCS = main.cpp Game.cpp Map.cpp Player.cpp Render.cpp Enemy.cpp
+SRCS = main.cpp Game.cpp Map.cpp Player.cpp Render.cpp Enemy.cpp Cutscene.cpp
 OBJS = $(addprefix $(BUILD_DIR)/, $(SRCS:.cpp=.o))
 
 all: $(TARGET)
@@ -19,4 +19,4 @@ $(BUILD_DIR)/%.o: %.cpp
 clean:
 	rm -rf $(BUILD_DIR)
 
-.PHONY: clean
+.PHONY: all clean

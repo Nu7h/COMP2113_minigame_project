@@ -70,12 +70,7 @@ class Boss : public Enemy{
         int getVulnerableTimer() const { return vulnerableTimer; }
         int getRageJumpCount() const { return rageJumpCount; }
         
-        // Hitbox check - returns true if (attackX, attackY) hits a valid body part
-        // Visual layout (origin at boss.x, boss.y):
-        //   col:  x    x+1  x+2  x+3  x+4
-        //   y  :            0
-        //   y+1:  /         |         backslash
-        //   y+2:       /         backslash
+
         bool isHitByAttack(int attackX, int attackY) const {
             if (attackX == x + 2 && attackY == y)     return true;  // Head
             if (attackX == x     && attackY == y + 1) return true;  // Left arm

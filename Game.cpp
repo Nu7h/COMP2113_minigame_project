@@ -15,6 +15,7 @@ std::mt19937& gameRng(){
     return gen;
 }
 
+bool introOnce = true;
 
 void placeSlimeRandom(Slime& slime, const Map& map, int avoidX, int avoidY, const std::vector<Slime>& existingSlimes){
     std::vector<std::pair<int, int>> cells;
@@ -200,9 +201,15 @@ void Game::inputStartMenu() {
         }
         break;
     }
+    
 }
 
 void Game::inputDifficultyMenu() {
+    
+    if(introOnce){
+        intro();
+        introOnce = false;
+    }
     int ch = readKey();
 
     switch (ch) {
