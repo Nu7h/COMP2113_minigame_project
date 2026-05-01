@@ -199,7 +199,7 @@ void Game::inputStartMenu() {
         if (startMenuSelection == 0) {
             difficultyMenuSelection = 1;  // default to Normal
             if(introOnce){
-                //intro();
+                intro();
                 introOnce = false;
             }
             state = GameState::DIFFICULTY_MENU;
