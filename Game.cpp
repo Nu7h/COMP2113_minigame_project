@@ -1,3 +1,22 @@
+/*
+ * Game.cpp - Main game engine and state management
+ * 
+ * Overview:
+ * - Implements the main game loop: input() -> update() -> render()
+ * - Manages game states: START_MENU, DIFFICULTY_MENU, PLAYING, PAUSED, GAME_OVER, WIN, SAVING
+ * - Handles player input and movement with collision detection (walls, locked exits, enemies)
+ * - Updates game entities: player, slimes, boss, projectiles, and health hearts
+ * - Manages room transitions and enemy spawning based on difficulty
+ * - Implements save/load game functionality
+ * 
+ * Key Features:
+ * - Enemy collision: Player cannot walk through slimes or boss
+ * - Health hearts: Drop from defeated slimes, heal player 10 HP on collection
+ * - Combat system: Player attacks in facing direction, enemies fight back
+ * - Invincibility frames: Prevents rapid damage stacking
+ * - Room locking: Rooms are locked until all enemies are defeated (or in Explore mode)
+ */
+
 #include "Game.h"
 
 namespace {
@@ -10,6 +29,9 @@ std::mt19937& gameRng(){
 bool introOnce = true;
 
 void placeSlimeRandom(Slime& slime, const Map& map, int avoidX, int avoidY, const std::vector<Slime>& existingSlimes){
+    // Finds a random walkable position for a slime, avoiding player and other slimes
+    // Scans all map tiles and builds a list of valid placement positions
+    // Then randomly selects one
     std::vector<std::pair<int, int>> cells;
 
     for(int yy = 0; yy < map.getHeight(); ++yy){
@@ -45,13 +67,16 @@ void placeSlimeRandom(Slime& slime, const Map& map, int avoidX, int avoidY, cons
 }
 
 void spawnSlimes_Count(std::vector<Slime>& slimes, const Map& map, int px, int py, Difficulty difficulty, int count){
+    // Spawn exactly 'count' slimes with speed determined by difficulty
+    // Clears existing slimes first, then spawns the specified number
     slimes.clear();
 
     if (count <= 0) return;
 
-    int slimeSpeed = 10;
-    if (difficulty == Difficulty::NORMAL) slimeSpeed = 8;
-    else if (difficulty == Difficulty::HARD) slimeSpeed = 6;
+    // Slime speed inversely correlates with cooldown (lower = faster)
+    int slimeSpeed = 10;  // Easy
+    if (difficulty == Difficulty::NORMAL) slimeSpeed = 8;   // Medium
+    else if (difficulty == Difficulty::HARD) slimeSpeed = 6;  // Fast
 
     for (int i = 0; i < count; i++){
         Slime s;
@@ -64,7 +89,9 @@ void spawnSlimes_Count(std::vector<Slime>& slimes, const Map& map, int px, int p
 }
 
 void spawnSlimes_Difficulty(std::vector<Slime>& slimes, const Map& map, int px, int py, Difficulty difficulty){
-    int numberSlimes = 1;
+    // Spawn slimes based on difficulty level
+    // Easy: 1 slime, Normal: 2 slimes, Hard: 3 slimes, Explore: 0 slimes
+    int numberSlimes = 1;  // Easy
     if( difficulty == Difficulty::NORMAL){
         numberSlimes = 2;
     }else if( difficulty == Difficulty::HARD){
@@ -304,6 +331,7 @@ void Game::inputPlaying(){
         else if(nx == 0 && map.getNeighbor('W') != "0" && map.getTile(0, ny) == ' ') atLockedExit = true;
     }
 
+    // Collision detection with enemies - prevents player from walking through slimes or boss
     bool collidesWithEnemy = false;
     for (const auto& slime : slimes) {
         if (slime.x == nx && slime.y == ny) {
@@ -311,6 +339,7 @@ void Game::inputPlaying(){
             break;
         }
     }
+    // Check boss collision (both body and extended hitbox)
     if (!collidesWithEnemy && boss != nullptr &&
         (boss->isHitByAttack(nx, ny) || (boss->x == nx && boss->y == ny)))
         collidesWithEnemy = true;
@@ -601,11 +630,11 @@ void Game::updatePlaying(){
         if (isAttacking) {
             for (auto e = slimes.begin(); e != slimes.end(); ) {
                 if (e->x == attackX && e->y == attackY) {
-                    if(slimeDmgTimer == 0){        // add timer check
+                    if(slimeDmgTimer == 0){        // Timer prevents multiple hits per attack
                         e->hp -= 10;
                         slimeDmgTimer = 3;
                         if (e->hp <= 0) {
-                            // Drop heart on slime death
+                            // Drop heart on slime death - heals player for 10 HP when collected
                             Heart heart;
                             heart.x = e->x;
                             heart.y = e->y;
@@ -630,12 +659,12 @@ void Game::updatePlaying(){
         }
     }
     if(dmgTimer > 0)      dmgTimer--;
-    if(slimeDmgTimer > 0) slimeDmgTimer--;  // add this
+    if(slimeDmgTimer > 0) slimeDmgTimer--;  // Decrement damage timing cooldowns
     
-    // Check for heart collision and heal player
+    // Heart collection: Player heals 10 HP (capped at maxHp) when moving onto a heart
     for (auto h = hearts.begin(); h != hearts.end(); ) {
         if (h->x == player.getX() && h->y == player.getY()) {
-            player.hp = std::min(player.hp + 10, player.maxHp);
+            player.hp = std::min(player.hp + 10, player.maxHp);  // Heal but don't exceed max
             h = hearts.erase(h);
         } else {
             ++h;

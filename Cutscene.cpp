@@ -284,9 +284,3 @@ void outro() {
     }
 }
     
-/*
-for (int i = 1; i <= 2; i++) {
-        dialogue("room/5 scene.txt", "room/7 scene dialogue.txt", 0.02, 0, i);
-        waitSeconds(2);
-    }
-*/
