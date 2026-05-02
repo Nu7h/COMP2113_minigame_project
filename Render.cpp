@@ -101,6 +101,9 @@ void Render::drawBossProjectile(const struct bossProjectile& projectile){
     printf(COLOR_BRED COLOR_BOLD "*" COLOR_RESET);
 }
 
+// Render a health heart on the map at the given position
+// Hearts are displayed in red and drop from slimes when they are defeated
+// Player heals 10 HP by walking over a heart
 void Render::drawHeart(const Heart& heart) {
     moveTo(heart.x, heart.y+1);
     printf(COLOR_RED COLOR_BOLD "♥" COLOR_RESET);

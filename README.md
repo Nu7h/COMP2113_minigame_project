@@ -22,6 +22,7 @@ Run:
 | `^` `v` `<` `>` `P` | Player (facing up/down/left/right) |
 | `E` | Enemy (Slime) |
 | `B` | Boss |
+| `♥` | Health heart (drops from slimes, heals player for 10 HP) |
 | `*` | Attack particle |
 | `o` | Enemy projectile |
 
@@ -34,6 +35,7 @@ Run:
 | S | Down |
 | D | Right |
 | Space bar | Attack |
+| C | Activate shield (reflects projectiles) |
 | P | Pause | 
 | Q | Quit | 
 
@@ -56,8 +58,16 @@ Run:
 - Press `Space` to attack in the direction you are facing
 - Player has invincibility frames after taking damage (~2 seconds)
 - Player blinks while invincible
+- Press `C` to activate shield - reflects incoming projectiles
 - Enemies shoot projectiles (`o`) when within close range
 - Enemies wander slowly when the player is far, and chase when nearby
+- **Cannot walk into slimes or boss** - collision detection prevents overlapping with enemies
+
+### Health & Healing
+- Slimes drop health hearts (`♥`) when defeated
+- Walk over a heart to collect it and heal **10 HP** (capped at max HP)
+- Hearts disappear when collected or when transitioning to a new room
+- Use combat strategically to defeat slimes and collect healing items
 
 ### Room Transitions
 - Rooms are connected via north/east/south/west exits
