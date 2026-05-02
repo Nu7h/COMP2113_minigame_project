@@ -7,7 +7,7 @@ The main game will be based on text and ASCII art.
 
 ## How to Play
 Run: 
-`make && ./build/game` or `make`
+`make && ./build/game` or `make` then `./build/game`
 
 
 ## Basic game settings
@@ -35,7 +35,7 @@ Run:
 | S | Down |
 | D | Right |
 | Space bar | Attack |
-| C | Activate shield (reflects projectiles) |
+| C | Activate shield (absorbs projectiles) |
 | P | Pause | 
 | Q | Quit | 
 
@@ -75,8 +75,8 @@ Run:
 - Enemies respawn when entering a new room
 
 ### Enemy Behavior
-Enemies have different behaviors depending on the situation. 
-Stay alert — they are smarter than they look!
+- Enemies have different behaviors depending on the situation. 
+- Stay alert — they are smarter than they look!
 
 ### HUD
 - Displays current HP as hearts (`<3`) with color indicator:
