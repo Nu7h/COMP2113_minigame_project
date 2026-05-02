@@ -192,7 +192,7 @@ void intro() {
     // Show skip hint
     clearScreen();
     cout << "\033[33m  Press S at any time to skip the cutscene...\033[0m" << flush;
-    waitSeconds(1.5);
+    waitSeconds(1);
 
     // opening pan
     panscene("Intro/1 scene.txt", 20, 0.1);
