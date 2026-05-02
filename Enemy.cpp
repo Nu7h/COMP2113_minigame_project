@@ -5,6 +5,7 @@ using namespace std;
 int max_approaching_tiles = 10;
 const int slimeShootCooldownTicks = 20;
 
+// Controls enemy movement: chase player, wander, and shoot when close
 void Enemy::approach(const Player& player, const Map& map, const std::vector<Slime>& others){
     if (shootCooldown > 0) shootCooldown--;
 
@@ -77,6 +78,7 @@ void Enemy::approach(const Player& player, const Map& map, const std::vector<Sli
     y = ny;
 }
 
+// Updates slime projectiles: movement, collision, and damage handling
 void Enemy::updateProjectiles(const Map& map, Player& player){
     for ( auto it = particles.begin(); it != particles.end();){
         if (it->moveCooldown > 0) {
@@ -103,7 +105,7 @@ void Enemy::updateProjectiles(const Map& map, Player& player){
 }
 
 // ====== BOSS IMPLEMENTATION ======
-
+// Updates boss behavior: shooting patterns, jumping, rage mode, and vulnerability
 void Boss::updateBoss(const Player& player, Map& map) {
     lastPlayerX = player.getX();
     lastPlayerY = player.getY();
@@ -222,6 +224,7 @@ void Boss::updateBoss(const Player& player, Map& map) {
     }
 }
 
+// Updates boss projectiles: tracking, splitting, collisions, and damage
 void Boss::updateBossProjectiles(const Map& map, Player& player) {
     // Collect newly spawned projectiles separately so we don't invalidate
     // the iterator (push_back can grow the vector mid-iteration).

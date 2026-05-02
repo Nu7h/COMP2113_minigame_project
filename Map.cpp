@@ -3,8 +3,10 @@
 #include <fstream>
 #include <iostream>
 
+// Default constructor for Map
 Map::Map() = default;
 
+// Loads map data (links, room name, and grid) from a file
 bool Map::loadFromFile(const std::string& path) {
     std::ifstream in(path);
     if(!in) return false;
@@ -27,6 +29,7 @@ bool Map::loadFromFile(const std::string& path) {
     return true;
 }
 
+// Returns the neighboring room filename based on direction
 std::string Map::getNeighbor(char dir) const {
     switch (dir) {
         case 'N': return links.north;

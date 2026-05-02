@@ -4,6 +4,7 @@
 
 static struct termios originalTermios;
 
+// Enable raw mode for real-time, non-echo terminal input
 void enableRawMode() {
     tcgetattr(STDIN_FILENO, &originalTermios);
     struct termios raw = originalTermios;
@@ -13,10 +14,12 @@ void enableRawMode() {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
+// Restore terminal to original settings
 void disableRawMode() {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &originalTermios);
 }
 
+// Main entry: setup terminal, run game, then restore state
 int main() {
     enableRawMode();
     atexit(disableRawMode); 

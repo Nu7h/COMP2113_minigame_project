@@ -1,5 +1,6 @@
 #include "Render.h"
 
+//define colors
 #define COLOR_RESET   "\033[0m"
 #define COLOR_RED     "\033[31m"
 #define COLOR_GREEN   "\033[32m"
@@ -43,6 +44,7 @@ void Render::drawStartMenu(int menuSelection, bool hasSaveFile) {
     fflush(stdout);
 }
 
+// Renders difficulty selection menu
 void Render::drawDifficultyMenu(int menuSelection) {
     clearScreen();
 
@@ -64,6 +66,7 @@ void Render::drawDifficultyMenu(int menuSelection) {
     fflush(stdout);
 }
 
+// Renders full game screen (map, enemies, boss, UI, etc.)
 void Render::drawGame(const Map& map, const Player& player, const std::vector<Slime>& slimes, class Boss* boss, bool isAttacking, int attackX, int attackY,  bool roomLocked, const std::vector<struct Heart>& hearts){
     clearScreen();
     drawMap(map);
@@ -91,11 +94,13 @@ void Render::drawGame(const Map& map, const Player& player, const std::vector<Sl
     fflush(stdout);
 }
 
+// Renders slime projectile
 void Render::drawProjectile(const slimeProjectile& projectile){
     moveTo(projectile.x, projectile.y+1);
     printf(COLOR_BRED COLOR_BOLD "o" COLOR_RESET);
 }
 
+// Renders boss projectile
 void Render::drawBossProjectile(const struct bossProjectile& projectile){
     moveTo(projectile.x, projectile.y+1);
     printf(COLOR_BRED COLOR_BOLD "*" COLOR_RESET);
@@ -142,6 +147,7 @@ void Render::drawSavePrompt(){
 //     PRIVATE
 // ===============
 
+// Renders map grid and room name
 void Render::drawMap(const Map& map){
     std::string name = map.getRoomName();
     int mapWidth = map.getWidth();
@@ -159,6 +165,7 @@ void Render::drawMap(const Map& map){
 
 }
 
+// Renders player character and shield
 void Render::drawPlayer(const Player& player, const Map& map){
     if(player.isBlinking) return;
 
@@ -189,11 +196,13 @@ void Render::drawPlayer(const Player& player, const Map& map){
     }
 }
 
+// Renders slime
 void Render::drawEnemy(const Enemy& slime){
     moveTo(slime.x, slime.y+1);
     printf(COLOR_RED COLOR_BOLD "E" COLOR_RESET);
 }
 
+// Renders boss
 void Render::drawBoss(const class Boss& boss){
     // Determine color based on state
     const char* color = COLOR_RED;  // Normal state
@@ -221,6 +230,7 @@ void Render::drawBoss(const class Boss& boss){
     printf("%s / \\" COLOR_RESET, color);
 }
 
+// Renders HUD (player HP, boss HP, slime HP, controls)
 void Render::drawHUD(const Map& map, int hp, int maxHp, class Boss* boss, bool roomLocked, const std::vector<Slime>& slimes){
     moveTo(0, map.getHeight() + 2);
 
@@ -284,6 +294,7 @@ void Render::drawAttack(bool isAttacking, int attackX, int attackY, int lastX){
     }
 }
 
+// Renders map tile based on type
 void Render::drawTile(int x, int y, char tile){
     moveTo(x, y);
     if(tile == '|' || tile == '_' || tile == '+'){
@@ -297,6 +308,7 @@ void Render::drawTile(int x, int y, char tile){
     }
 }
 
+// Renders locked door overlays
 void Render::drawLockedDoors(const Map& map, bool roomLocked){
     if(!roomLocked) return;
 

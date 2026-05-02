@@ -1,21 +1,20 @@
-/*
- * Game.cpp - Main game engine and state management
- * 
- * Overview:
- * - Implements the main game loop: input() -> update() -> render()
- * - Manages game states: START_MENU, DIFFICULTY_MENU, PLAYING, PAUSED, GAME_OVER, WIN, SAVING
- * - Handles player input and movement with collision detection (walls, locked exits, enemies)
- * - Updates game entities: player, slimes, boss, projectiles, and health hearts
- * - Manages room transitions and enemy spawning based on difficulty
- * - Implements save/load game functionality
- * 
- * Key Features:
- * - Enemy collision: Player cannot walk through slimes or boss
- * - Health hearts: Drop from defeated slimes, heal player 10 HP on collection
- * - Combat system: Player attacks in facing direction, enemies fight back
- * - Invincibility frames: Prevents rapid damage stacking
- * - Room locking: Rooms are locked until all enemies are defeated (or in Explore mode)
- */
+//  Game.cpp - Main game engine and state management
+ 
+//  Overview:
+//  - Implements the main game loop: input() -> update() -> render()
+//  - Manages game states: START_MENU, DIFFICULTY_MENU, PLAYING, PAUSED, GAME_OVER, WIN, SAVING
+//  - Handles player input and movement with collision detection (walls, locked exits, enemies)
+//  - Updates game entities: player, slimes, boss, projectiles, and health hearts
+//  - Manages room transitions and enemy spawning based on difficulty
+//  - Implements save/load game functionality
+ 
+//  Key Features:
+//  - Enemy collision: Player cannot walk through slimes or boss
+//  - Health hearts: Drop from defeated slimes, heal player 10 HP on collection
+//  - Combat system: Player attacks in facing direction, enemies fight back
+//  - Invincibility frames: Prevents rapid damage stacking
+//  - Room locking: Rooms are locked until all enemies are defeated (or in Explore mode)
+
 
 #include "Game.h"
 
