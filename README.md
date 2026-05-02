@@ -58,7 +58,7 @@ Run:
 - Press `Space` to attack in the direction you are facing
 - Player has invincibility frames after taking damage (~2 seconds)
 - Player blinks while invincible
-- Press `C` to activate shield - reflects incoming projectiles
+- Press `C` to activate shield - absorbs incoming projectiles
 - Enemies shoot projectiles (`o`) when within close range
 - Enemies wander slowly when the player is far, and chase when nearby
 - **Cannot walk into slimes or boss** - collision detection prevents overlapping with enemies
@@ -74,15 +74,20 @@ Run:
 - Walk to the edge of a room to automatically transition to the next room
 - Enemies respawn when entering a new room
 
-### Enemy Behavior
-- Enemies have different behaviors depending on the situation. 
-- Stay alert — they are smarter than they look!
-
 ### HUD
 - Displays current HP as hearts (`<3`) with color indicator:
   - Green → healthy
   - Yellow → moderate damage
   - Red → low HP
+- Displays **Slime HP** as mini bars (`###` vs `...`) with color indicators:
+  - Green → strong
+  - Yellow → weakened
+  - Red → critical
+- Displays **Boss HP** with color-coded percentage bar:
+  - Green → >50%
+  - Yellow → 25–50%
+  - Red → ≤25%
+- Shows lock status when room is blocked until all slimes are defeated
 - Shows available controls at the bottom of the screen
 
 ## Team
