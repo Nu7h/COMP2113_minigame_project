@@ -226,6 +226,7 @@ void Game::inputStartMenu() {
     case '\n':
     case ' ':
         if (startMenuSelection == 0) {
+            std::remove("save.dat");
             difficultyMenuSelection = 1;  // default to Normal
             if(introOnce){
                 intro();
@@ -569,7 +570,7 @@ void Game::saveGame() {
         f << roomSaves[i].roomNumber << " " << roomSaves[i].slimesLeft << "\n";
     }
 
-    // ✅ ADD BOSS SAVE
+    // BOSS SAVE
     if (boss != nullptr) {
         f << 1 << "\n";                 // boss exists
         f << boss->x << " " << boss->y << " " << boss->hp << "\n";
@@ -583,7 +584,7 @@ void Game::updatePaused()  { /* freeze evrytng  */ }
 void Game::inputSaving() {
     int ch = readKey();
     if (ch == 'y' || ch == 'Y') { saveGame(); exit(0); }
-    if (ch == 'n' || ch == 'N') { exit(0); }
+    if (ch == 'n' || ch == 'N') { std::remove("save.dat"); exit(0); }
 }
 
 void Game::updateGameOver(){ /* nothing to tick */ }
