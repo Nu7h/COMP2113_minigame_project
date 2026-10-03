@@ -4,6 +4,7 @@
 
 The purpose of the project is to recreate a source code base for the game from scracth.
 The main game will be based on text and ASCII art.
+*Game Demo*: https://youtu.be/s4xMnVYlcLk
 
 ## How to Play
 Run: 
